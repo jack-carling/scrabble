@@ -35,6 +35,7 @@ body {
   padding: 1rem;
   background-color: $main-bg-color;
   color: $main-text-color;
+  font-family: $default;
 }
 section.app {
   max-width: 100%;
@@ -53,10 +54,25 @@ button {
   border-radius: 999px;
   background-color: $bg-empty;
   color: $main-text-color;
+  outline: none;
+}
+button:hover {
+  opacity: 0.75;
+}
+p {
+  margin: 0.5rem 0;
 }
 @media only screen and (min-width: 1150px) {
   #app {
     grid-template-columns: 750px 1fr;
   }
+}
+.flip-enter-active {
+  animation: flipInY;
+  animation-duration: 1s;
+}
+.flip-leave-to {
+  animation: flipOutY;
+  animation-duration: 1s;
 }
 </style>

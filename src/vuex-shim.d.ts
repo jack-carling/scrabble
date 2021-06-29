@@ -10,6 +10,8 @@ declare module '@vue/runtime-core' {
   interface State {
     origin: Origin;
     word: string;
+    words: Array<string>;
+    loading: boolean;
   }
 
   interface ComponentCustomProperties {

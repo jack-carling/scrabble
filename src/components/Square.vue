@@ -131,5 +131,6 @@ div.score {
   display: flex;
   justify-content: center;
   align-items: center;
+  box-shadow: 2.5px 2.5px rgba($color: #000000, $alpha: 0.25);
 }
 </style>

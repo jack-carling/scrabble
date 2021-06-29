@@ -9,6 +9,8 @@ export const store = createStore({
   state: {
     origin: { source: '', index: 0 },
     word: '',
+    loading: false,
+    words: [],
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -18,6 +20,13 @@ export const store = createStore({
     },
     setWord(state: any, payload: string) {
       state.word = payload;
+    },
+    setLoading(state: any, payload: boolean) {
+      state.loading = payload;
+    },
+    handleWords(state: any) {
+      state.words.push(state.word);
+      state.word = '';
     },
   },
 });

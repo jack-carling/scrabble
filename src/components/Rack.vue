@@ -80,6 +80,9 @@ export default defineComponent({
     origin(): Origin {
       return this.$store.state.origin;
     },
+    loading(): boolean {
+      return this.$store.state.loading;
+    },
   },
   methods: {
     handleResize() {
@@ -88,7 +91,7 @@ export default defineComponent({
       rack.style.height = height * 50 + 'px';
     },
     handleDrag(square: Square, index: number, e: any) {
-      if (!square.letter) {
+      if (!square.letter || this.loading) {
         e.preventDefault();
         return;
       }
