@@ -1,4 +1,4 @@
-export function score(letter: string): number {
+export function calculateScore(letter: string): number {
   switch (letter) {
     case 'A':
       return 1;

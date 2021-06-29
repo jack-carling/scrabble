@@ -9,8 +9,8 @@ interface Origin {
 declare module '@vue/runtime-core' {
   interface State {
     origin: Origin;
-    word: string;
-    words: Array<string>;
+    round: string[];
+    words: string[][];
     loading: boolean;
   }
 

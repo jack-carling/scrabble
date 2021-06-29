@@ -8,8 +8,8 @@ interface Origin {
 export const store = createStore({
   state: {
     origin: { source: '', index: 0 },
-    word: '',
     loading: false,
+    round: [],
     words: [],
   },
   mutations: {
@@ -18,15 +18,18 @@ export const store = createStore({
       state.origin.source = payload.source;
       state.origin.index = payload.index;
     },
-    setWord(state: any, payload: string) {
-      state.word = payload;
+    clearWords(state: any) {
+      state.round = [];
+    },
+    setWords(state: any, payload: string[]) {
+      state.round = payload;
     },
     setLoading(state: any, payload: boolean) {
       state.loading = payload;
     },
     handleWords(state: any) {
-      state.words.push(state.word);
-      state.word = '';
+      state.words.push(state.round);
+      state.round = [];
     },
   },
 });

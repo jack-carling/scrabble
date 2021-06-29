@@ -9,7 +9,7 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-import { score } from '../services/score';
+import { calculateScore } from '../services/score';
 
 export default defineComponent({
   props: {
@@ -19,7 +19,7 @@ export default defineComponent({
   },
   computed: {
     score(): number {
-      return score(this.square?.letter);
+      return calculateScore(this.square?.letter);
     },
     content(): string {
       if (this.square?.letter) {

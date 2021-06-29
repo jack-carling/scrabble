@@ -8,7 +8,7 @@
     </transition>
   </section>
   <transition name="error">
-    <p v-if="error">{{ error }}</p>
+    <div v-if="error" v-html="error" class="error-container"></div>
   </transition>
 </template>
 
@@ -22,8 +22,8 @@ export default defineComponent({
     };
   },
   computed: {
-    word(): string {
-      return this.$store.state.word;
+    round(): string[] {
+      return this.$store.state.round;
     },
     loading(): boolean {
       return this.$store.state.loading;
@@ -32,7 +32,7 @@ export default defineComponent({
   methods: {
     async checkWord() {
       this.error = '';
-      if (!this.word || this.loading) {
+      if (!this.round.length || this.loading) {
         const button = this.$refs.button as HTMLElement;
         button.classList.remove('animate__jello');
         void button.offsetWidth; // Restart animation
@@ -40,15 +40,30 @@ export default defineComponent({
         return;
       }
       this.$store.commit('setLoading', true);
-      //console.log(this.word);
-      let res: any = await fetch(`/api?word=${this.word}`);
-      res = await res.json();
-      this.$store.commit('setLoading', false);
-      if (!res.success) {
-        this.error = res.message;
-      } else {
+
+      let results = [];
+
+      for await (let word of this.round) {
+        let res: any = await fetch(`/api?word=${word}`);
+        res = await res.json();
+        results.push(res);
+      }
+
+      const successAll = results.every((result) => result.success === true);
+
+      for (let result of results) {
+        if (result.success) {
+          this.error += `<span>${result.message}</span>`;
+        } else {
+          this.error += `<span class="error">${result.message}</span>`;
+        }
+      }
+
+      if (successAll) {
         this.$store.commit('handleWords');
       }
+
+      this.$store.commit('setLoading', false);
     },
   },
 });
@@ -69,6 +84,16 @@ div.loading {
   border-top: 5px solid $loading-bg;
   background-color: $main-bg-color;
   animation: spin 1s linear infinite;
+}
+div.error-container {
+  margin-top: 0.5rem;
+  ::v-deep(span) {
+    display: block;
+    margin-bottom: 0.5rem;
+  }
+  ::v-deep(span.error) {
+    color: #ff0033;
+  }
 }
 @keyframes spin {
   0% {

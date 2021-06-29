@@ -37,37 +37,30 @@ export default defineComponent({
       rack: [
         {
           letter: 'A',
-          premium: '',
           moving: false,
         },
         {
           letter: 'B',
-          premium: '',
           moving: false,
         },
         {
           letter: 'C',
-          premium: '',
           moving: false,
         },
         {
           letter: 'D',
-          premium: '',
           moving: false,
         },
         {
           letter: 'E',
-          premium: '',
           moving: false,
         },
         {
           letter: 'F',
-          premium: '',
           moving: false,
         },
         {
           letter: 'G',
-          premium: '',
           moving: false,
         },
       ] as Array<Square>,
