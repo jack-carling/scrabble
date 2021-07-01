@@ -10,9 +10,13 @@ Interpretation of the classic word game scrabble. Using the HTML Drag and Drop A
 - [x] Check invalid placements of letters
 - [x] Calculate score of word
 - [x] Calculate premium scores
-- [ ] Handle and display scores
-- [ ] Randomly distribute tiles to racks
-- [ ] SSE - turn based
+- [x] Handle and display scores
+- [x] Randomly distribute tiles to racks
+- [x] SSE - turn based
+- [ ] User can skip a turn
+- [ ] User can swap out letters
+- [ ] SSE - allow more than 2 users
+- [ ] User can create their own rooms
 
 ## Installation
 

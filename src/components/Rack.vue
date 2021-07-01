@@ -9,6 +9,8 @@
       @dragover.prevent="setDropEffect"
       @drop="handleDrop(square, $event)"
       @dragend="handleStop(square)"
+      class="animate__animated"
+      :ref="`square${i}`"
     />
   </div>
 </template>
@@ -132,6 +134,14 @@ export default defineComponent({
     handleStop(square: Square) {
       square.moving = false;
     },
+    animateSquare(i: number) {
+      const square = this.$refs[`square${i}`] as any;
+      this.$nextTick(() => {
+        square.$el.classList.remove('animate__bounce');
+        void square.offsetWidth; // Restart animation
+        square.$el.classList.add('animate__bounce');
+      });
+    },
   },
   mounted() {
     this.handleResize();
@@ -176,6 +186,7 @@ export default defineComponent({
           for (let i = 0; i < this.rack.length; i++) {
             if (!this.rack[i].letter) {
               this.rack[i].letter = data[count - 1].letter;
+              this.animateSquare(i);
               count--;
             }
           }

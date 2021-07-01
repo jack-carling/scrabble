@@ -60,6 +60,13 @@ module.exports = (app) => {
     if (!squares.hasOwnProperty(room)) {
       squares[room] = [];
       squares[room] = [...getSquares];
+
+      for (let i = squares[room].length - 1; i > 0; i--) {
+        const newIndex = Math.floor(Math.random() * (i + 1));
+        const oldValue = squares[room][newIndex];
+        squares[room][newIndex] = squares[room][i];
+        squares[room][i] = oldValue;
+      }
     }
 
     const data = rooms.filter((x) => x.room === room);

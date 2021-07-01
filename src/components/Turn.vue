@@ -91,7 +91,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 section {
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
   max-width: 350px;
 }
 div.turns {
