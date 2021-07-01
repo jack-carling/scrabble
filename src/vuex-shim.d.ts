@@ -14,6 +14,7 @@ declare module '@vue/runtime-core' {
     loading: boolean;
     players: string[];
     currentPlayer: number;
+    previousPlayer: number;
     me: number;
     playerScore: number[];
     wordScore: number;

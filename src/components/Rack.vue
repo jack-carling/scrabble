@@ -36,31 +36,31 @@ export default defineComponent({
     return {
       rack: [
         {
-          letter: 'A',
+          letter: '',
           moving: false,
         },
         {
-          letter: 'B',
+          letter: '',
           moving: false,
         },
         {
-          letter: 'C',
+          letter: '',
           moving: false,
         },
         {
-          letter: 'D',
+          letter: '',
           moving: false,
         },
         {
-          letter: 'E',
+          letter: '',
           moving: false,
         },
         {
-          letter: 'F',
+          letter: '',
           moving: false,
         },
         {
-          letter: 'G',
+          letter: '',
           moving: false,
         },
       ] as Array<Square>,
@@ -75,6 +75,21 @@ export default defineComponent({
     },
     loading(): boolean {
       return this.$store.state.loading;
+    },
+    id(): string {
+      return this.$store.state.id;
+    },
+    lobby(): boolean {
+      return this.$store.state.lobby;
+    },
+    words(): string[][] {
+      return this.$store.state.words;
+    },
+    previousPlayer(): number {
+      return this.$store.state.previousPlayer;
+    },
+    me(): number {
+      return this.$store.state.me;
     },
   },
   methods: {
@@ -130,6 +145,40 @@ export default defineComponent({
       handler() {
         if (this.origin.source === 'rack') {
           this.rack[this.origin.index].letter = '';
+        }
+      },
+      deep: true,
+    },
+    async lobby() {
+      let res: any = await fetch(`/sse/squares?id=${this.id}&count=7`);
+      res = await res.json();
+      if (res.success) {
+        const data = JSON.parse(res.data);
+        this.rack = [...data];
+      }
+    },
+    words: {
+      async handler() {
+        if (this.previousPlayer !== this.me) return;
+
+        let count = 7;
+        for (let square of this.rack) {
+          if (square.letter) {
+            count--;
+          }
+        }
+        if (!count) return;
+
+        let res: any = await fetch(`/sse/squares?id=${this.id}&count=${count}`);
+        res = await res.json();
+        if (res.success) {
+          const data = JSON.parse(res.data);
+          for (let i = 0; i < this.rack.length; i++) {
+            if (!this.rack[i].letter) {
+              this.rack[i].letter = data[count - 1].letter;
+              count--;
+            }
+          }
         }
       },
       deep: true,

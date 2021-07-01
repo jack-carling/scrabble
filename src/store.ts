@@ -15,6 +15,7 @@ export const store = createStore({
     words: [],
     players: [],
     currentPlayer: 0,
+    previousPlayer: 0,
     me: 0,
     playerScore: [],
     wordScore: 0,
@@ -51,6 +52,13 @@ export const store = createStore({
         state.currentPlayer = 0;
       } else {
         state.currentPlayer++;
+      }
+      if (state.words.length === 1) {
+        state.previousPlayer = 0;
+      } else if (state.previousPlayer === state.players.length - 1) {
+        state.previousPlayer = 0;
+      } else {
+        state.previousPlayer++;
       }
     },
     setLobby(state: any, payload: boolean) {

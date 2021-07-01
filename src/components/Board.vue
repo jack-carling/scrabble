@@ -190,6 +190,30 @@ export default defineComponent({
         }
       }
 
+      if (direction === 'horizontal') {
+        const columns = [] as number[];
+        this.round.map((x) => {
+          const column = Math.floor(x.index / 15);
+          columns.push(column);
+        });
+        const set = new Set(columns);
+        if (set.size > 1) {
+          direction = 'error';
+        }
+      }
+
+      if (direction === 'vertical') {
+        const rows = [] as number[];
+        this.round.map((x) => {
+          const row = x.index % 15;
+          rows.push(row);
+        });
+        const set = new Set(rows);
+        if (set.size > 1) {
+          direction = 'error';
+        }
+      }
+
       if (direction !== 'error') {
         this.handleAdjacent(direction);
         return;

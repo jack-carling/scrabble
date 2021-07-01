@@ -1,8 +1,7 @@
 <template>
   <div class="square" :class="background">
-    <span class="content" v-html="content"></span>
-    <span class="score" v-if="square.letter">{{ score }}</span>
-    <i v-if="square.error" class="material-icons error">error</i>
+    <span class="content" v-html="content" :class="{ error: square.error }"></span>
+    <span class="score" v-if="square.letter" :class="{ error: square.error }">{{ score }}</span>
     <div class="score" v-if="square.score">{{ square.score }}</div>
   </div>
 </template>
@@ -91,6 +90,9 @@ span.score {
   top: 0.2rem;
   right: 0.2rem;
 }
+span.error {
+  color: $error-color;
+}
 div.tw,
 div.tl,
 div.dw,
@@ -108,14 +110,6 @@ div.dw {
 }
 div.dl {
   background-color: $dl;
-}
-i.error {
-  color: $error-color;
-  position: absolute;
-  font-size: 20px;
-  bottom: -10px;
-  right: -10px;
-  z-index: 10;
 }
 div.score {
   width: 30px;
