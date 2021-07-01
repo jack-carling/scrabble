@@ -2,6 +2,8 @@ const { default: axios } = require('axios');
 const express = require('express');
 const app = express();
 
+app.use(express.json());
+
 const PORT = process.env.PORT || 5000;
 
 app.get('/api', async (req, res) => {
@@ -19,13 +21,15 @@ app.get('/api', async (req, res) => {
   valid = valid === -1 ? false : true;
   if (valid) {
     response.success = true;
-    response.message = `${word} is a valid word.`;
+    response.message = `${word}. It's a valid word.`;
   } else {
     response.success = false;
-    response.message = `${word} is not a valid word.`;
+    response.message = `${word}. It's not a valid word.`;
   }
   res.json(response);
 });
+
+require('./sse.js')(app);
 
 function handleError(res, message) {
   message = `Error: ${message}`;

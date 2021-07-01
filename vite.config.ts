@@ -20,6 +20,13 @@ export default defineConfig({
         secure: false,
         ws: true,
       },
+      '/sse': {
+        target: 'http://localhost:5000/sse',
+        changeOrigin: true,
+        rewrite: (path) => path.replace(/^\/sse/, ''),
+        secure: false,
+        ws: true,
+      },
     },
   },
 });

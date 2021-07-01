@@ -51,6 +51,7 @@ export default defineComponent({
   components: {
     Square,
   },
+  emits: ['incorrect-turn'],
   computed: {
     origin(): Origin {
       return this.$store.state.origin;
@@ -61,6 +62,18 @@ export default defineComponent({
     words(): string[][] {
       return this.$store.state.words;
     },
+    id(): string {
+      return this.$store.state.id;
+    },
+    currentPlayer(): number {
+      return this.$store.state.currentPlayer;
+    },
+    me(): number {
+      return this.$store.state.me;
+    },
+    differentRound(): Letters[] {
+      return this.$store.state.differentRound;
+    },
   },
   methods: {
     handleResize() {
@@ -70,6 +83,11 @@ export default defineComponent({
     handleDrag(square: Square, index: number, e: any) {
       if (!square.letter || this.loading || !square.playable) {
         e.preventDefault();
+        return;
+      }
+      if (this.currentPlayer !== this.me) {
+        e.preventDefault();
+        this.$emit('incorrect-turn');
         return;
       }
       for (let i = 0; i < this.board.length; i++) {
@@ -85,6 +103,12 @@ export default defineComponent({
       e.dataTransfer.dropEffect = 'move';
     },
     handleDrop(square: Square, e: any) {
+      if (this.currentPlayer !== this.me) {
+        e.preventDefault();
+        this.$emit('incorrect-turn');
+        return;
+      }
+
       let data = e.dataTransfer.getData('text/plain');
       data = JSON.parse(data);
 
@@ -478,6 +502,7 @@ export default defineComponent({
 
       const index = this.round[this.round.length - 1].index;
       this.board[index].score = total;
+      this.$store.commit('setWordScore', total);
     },
     makeAllWordsUnplayable() {
       for (let i = 0; i < this.board.length; i++) {
@@ -515,6 +540,33 @@ export default defineComponent({
         }
       },
       deep: true,
+    },
+    async round() {
+      if (this.currentPlayer !== this.me) return;
+
+      const data = JSON.stringify(this.round);
+      let res = await fetch(`/sse/play?id=${this.id}`, {
+        method: 'POST',
+        body: data,
+        headers: { 'Content-Type': 'application/json' },
+      });
+      res = await res.json();
+    },
+    differentRound() {
+      if (this.currentPlayer === this.me) return;
+      for (let i = 0; i < this.board.length; i++) {
+        if (this.board[i].playable) {
+          this.board[i].letter = '';
+          this.board[i].playable = false;
+        }
+      }
+      for (let diff of this.differentRound) {
+        const index = diff.index;
+        const letter = diff.letter;
+        this.board[index].letter = letter;
+        this.board[index].playable = true;
+      }
+      this.handlePlayable();
     },
   },
 });

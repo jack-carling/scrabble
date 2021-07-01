@@ -1,23 +1,71 @@
 <template>
-  <Board />
+  <Lobby v-if="lobby" />
+  <transition name="flip">
+    <TurnError v-if="error" />
+  </transition>
+  <Board @incorrect-turn="displayError" />
   <section class="app">
+    <Turn />
     <Rack />
-    <Check />
+    <Check @incorrect-turn="displayError" />
+    <Score />
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import Lobby from './components/Lobby.vue';
+import TurnError from './components/TurnError.vue';
 import Board from './components/Board.vue';
+import Turn from './components/Turn.vue';
 import Rack from './components/Rack.vue';
 import Check from './components/Check.vue';
+import Score from './components/Score.vue';
 
 export default defineComponent({
   components: {
+    Lobby,
+    TurnError,
     Board,
+    Turn,
     Rack,
     Check,
+    Score,
+  },
+  data() {
+    return {
+      error: false,
+      timeout: 0,
+    };
+  },
+  computed: {
+    id(): string {
+      return this.$store.state.id;
+    },
+    lobby(): boolean {
+      return this.$store.state.lobby;
+    },
+  },
+  methods: {
+    displayError() {
+      window.clearTimeout(this.timeout);
+      this.error = true;
+      this.timeout = window.setTimeout(() => {
+        this.error = false;
+      }, 2000);
+    },
+  },
+  async mounted() {
+    this.$store.dispatch('startSSE');
+  },
+  watch: {
+    async id() {
+      const name = prompt('What is your name?') || 'Player';
+      const room = 'ABC123';
+      let res: any = await fetch(`/sse/join?id=${this.id}&name=${name}&room=${room}`, { method: 'POST' });
+      res = await res.json();
+    },
   },
 });
 </script>
@@ -74,5 +122,21 @@ p {
 .flip-leave-to {
   animation: flipOutY;
   animation-duration: 1s;
+}
+.fade-enter-active {
+  animation: fadeIn;
+  animation-duration: 1s;
+}
+.fade-leave-to {
+  animation: fadeOut;
+  animation-duration: 1s;
+}
+@keyframes spin {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
 }
 </style>

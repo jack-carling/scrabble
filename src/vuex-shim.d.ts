@@ -12,6 +12,16 @@ declare module '@vue/runtime-core' {
     round: string[];
     words: string[][];
     loading: boolean;
+    players: string[];
+    currentPlayer: number;
+    me: number;
+    playerScore: number[];
+    wordScore: number;
+    id: string;
+    max: number;
+    lobby: boolean;
+    differentRound: [];
+    differentCheck: [];
   }
 
   interface ComponentCustomProperties {
