@@ -20,10 +20,14 @@ export const store = createStore({
     playerScore: [],
     wordScore: 0,
     id: '',
-    max: 2,
+    max: 4,
     lobby: true,
     differentRound: [],
     differentCheck: [],
+    game: {
+      code: '',
+      name: '',
+    },
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -63,6 +67,15 @@ export const store = createStore({
     },
     setLobby(state: any, payload: boolean) {
       state.lobby = payload;
+    },
+    setGameCode(state: any, payload: string) {
+      state.game.code = payload;
+    },
+    setGameName(state: any, payload: string) {
+      state.game.name = payload;
+    },
+    setMax(state: any, payload: number) {
+      state.max = payload;
     },
   },
   actions: {

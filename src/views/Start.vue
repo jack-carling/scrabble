@@ -1,0 +1,256 @@
+<template>
+  <main>
+    <img id="logo" src="../assets/logo.png" alt="Logo" draggable="false" />
+    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repudiandae, explicabo.</p>
+    <section v-if="!askName">
+      <div class="info">
+        <strong>JOIN GAME</strong><br />
+        <span v-if="!errors.join">{{ infoText[0] }}</span>
+        <span v-else>{{ infoText[1] }}</span>
+      </div>
+      <label for="join">
+        <div ref="label__join">Enter 6-digit code</div>
+        <input
+          type="text"
+          id="join"
+          placeholder="ABC123"
+          maxlength="6"
+          v-model="code"
+          @keyup.enter="joinGame"
+          autocomplete="off"
+        />
+      </label>
+      <button @click="joinGame" class="animate__animated" ref="button__join">Join Game</button>
+    </section>
+    <section v-if="!askName">
+      <div class="info">
+        <strong>CREATE GAME</strong><br />
+        <span>
+          Create a new game and share the code with your friends. Select the number of players and continue to generate
+          your code.
+        </span>
+      </div>
+      <label for="create">
+        Number of players
+        <div class="select">
+          <i class="material-icons">keyboard_arrow_down</i>
+          <select id="create" v-model="numberOfPlayers">
+            <option value="2">2</option>
+            <option value="3">3</option>
+            <option value="4">4</option>
+          </select>
+        </div>
+      </label>
+      <button @click="createGame">Create Game</button>
+    </section>
+    <section v-else>
+      <div class="info">
+        <strong>{{ headerInfo }}</strong>
+        <br />
+        <template v-if="headerInfo === 'JOINING GAME'">
+          <span v-if="!errors.name">{{ code }} • {{ nameText[0] }}</span>
+          <span v-else>{{ code }} • {{ nameText[1] }}</span>
+        </template>
+        <template v-else>
+          <span v-if="!errors.name">{{ code }} • {{ nameText[2] }}</span>
+          <span v-else>{{ code }} • {{ nameText[3] }}</span>
+        </template>
+      </div>
+      <label for="name">
+        <div ref="label__name">Name</div>
+        <input type="text" id="name" maxlength="12" v-model="name" @keyup.enter="handleName" autocomplete="off" />
+      </label>
+      <button @click="handleName" class="animate__animated" ref="button__join">Continue</button>
+    </section>
+  </main>
+</template>
+
+<script lang="ts">
+import { defineComponent } from 'vue';
+
+import { generateRandomCode } from '../services/random';
+
+export default defineComponent({
+  data() {
+    return {
+      code: '',
+      numberOfPlayers: 2,
+      loading: false,
+      infoText: [
+        'Enter the code provided by a friend to join their game.',
+        'This code is not valid, please try another one or create a new game.',
+      ],
+      errors: {
+        join: false,
+        name: false,
+      },
+      askName: false,
+      name: '',
+      headerInfo: '',
+      nameText: [
+        'Almost ready to join! What is your name?',
+        'Almost ready to join! Please enter between 2-12 characters.',
+        'Almost ready to start! What is your name?',
+        'Almost ready to start! Please enter between 2-12 characters.',
+      ],
+    };
+  },
+  methods: {
+    animateButton(button: HTMLElement) {
+      button.classList.remove('animate__jello');
+      void button.offsetWidth; // Restart animation
+      button.classList.add('animate__jello');
+    },
+    async joinGame() {
+      if (this.loading) return;
+      this.code = this.code.trim();
+      const label = this.$refs.label__join as HTMLElement;
+      if (this.code.length !== 6) {
+        this.$nextTick(() => {
+          label.classList.add('error');
+          const button = this.$refs.button__join as HTMLElement;
+          this.animateButton(button);
+        });
+        return;
+      }
+      this.loading = true;
+      let res: any = await fetch(`/sse/lobby?room=${this.code}`);
+      res = await res.json();
+      if (!res.success) {
+        this.errors.join = true;
+        this.$nextTick(() => {
+          label.classList.add('error');
+          const button = this.$refs.button__join as HTMLElement;
+          this.animateButton(button);
+        });
+      } else {
+        this.$store.commit('setGameCode', this.code);
+        this.headerInfo = 'JOINING GAME';
+        this.askName = true;
+      }
+      this.loading = false;
+    },
+    createGame() {
+      const players = Number(this.numberOfPlayers);
+      console.log('creating', players);
+      this.code = generateRandomCode();
+      this.$store.commit('setGameCode', this.code);
+      this.$store.commit('setMax', players);
+      this.headerInfo = 'CREATING GAME';
+      this.askName = true;
+    },
+    handleName() {
+      const label = this.$refs.label__name as HTMLElement;
+      if (this.name.length < 2) {
+        this.errors.name = true;
+        this.$nextTick(() => {
+          label.classList.add('error');
+          const button = this.$refs.button__join as HTMLElement;
+          this.animateButton(button);
+        });
+      } else {
+        this.$store.commit('setGameName', this.name);
+        this.$router.push('/game');
+      }
+    },
+  },
+  watch: {
+    code() {
+      const label = this.$refs.label__join as HTMLElement;
+      label.classList.remove('error');
+      this.errors.join = false;
+    },
+    name() {
+      const label = this.$refs.label__name as HTMLElement;
+      label.classList.remove('error');
+      this.errors.name = false;
+    },
+  },
+});
+</script>
+
+<style lang="scss" scoped>
+main {
+  grid-column: 1 / 3;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  button {
+    margin-top: 1rem;
+    min-width: 120px;
+  }
+  p {
+    margin: 0 0 2rem 0;
+    text-align: center;
+  }
+}
+section {
+  width: 500px;
+  display: grid;
+  grid-template-columns: 1fr max-content;
+  border: 1px solid $loading-bg;
+  padding: 1rem;
+  margin-bottom: 2rem;
+  div.info {
+    grid-column: 1 / 3;
+    margin-bottom: 1.5rem;
+    span {
+      font-size: 0.8rem;
+    }
+  }
+  label {
+    font-size: 0.7rem;
+    margin-right: 1rem;
+    input,
+    select {
+      margin-top: 0.2rem;
+    }
+  }
+  label div.error {
+    color: $error-color;
+  }
+}
+#logo {
+  max-width: 500px;
+}
+input {
+  width: 100%;
+  font-size: 16px;
+  padding: 5px;
+  font-family: $default;
+  appearance: none;
+  border: none;
+  outline: none;
+}
+select {
+  display: block;
+  width: 100%;
+  font-size: 16px;
+  padding: 5px;
+  font-family: $default;
+  appearance: none;
+  border: none;
+  outline: none;
+  cursor: pointer;
+}
+div.select {
+  position: relative;
+  i {
+    height: 24px;
+    position: absolute;
+    right: 5px;
+    top: 0;
+    bottom: 0;
+    margin: auto;
+    pointer-events: none;
+  }
+}
+@media only screen and (max-width: 532px) {
+  #logo {
+    max-width: 100%;
+  }
+  section {
+    max-width: 100%;
+  }
+}
+</style>

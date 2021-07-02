@@ -13,9 +13,10 @@ module.exports = (app) => {
 
     req.on('close', () => {
       delete connections[id];
+      console.log('Connections:', Object.keys(connections).length);
       const index = rooms.findIndex((x) => x.id === id);
+      if (index === -1) return;
       const room = rooms[index]?.room;
-      // Write user disconnected
       rooms.splice(index, 1);
       if (!room) return;
       const checkRooms = rooms.filter((x) => x.room === room).length;
@@ -23,6 +24,8 @@ module.exports = (app) => {
         delete squares[room];
       }
     });
+
+    console.log('Connections:', Object.keys(connections).length);
 
     res.set({
       'Content-Type': 'text/event-stream',
@@ -33,10 +36,27 @@ module.exports = (app) => {
     res.write(`data: ${message} \n\n`);
   });
 
+  app.get('/sse/lobby', (req, res) => {
+    const room = req.query.room;
+    if (!room) {
+      const message = 'Room is missing.';
+      handleError(res, message);
+      return;
+    }
+    const exists = rooms.find((x) => x.room === room);
+    if (!exists) {
+      const message = 'Room does not exist.';
+      handleError(res, message);
+      return;
+    }
+    res.json({ success: true });
+  });
+
   app.post('/sse/join', (req, res) => {
     const id = req.query.id;
     const name = req.query.name;
     const room = req.query.room;
+    let max = Number(req.query.max);
 
     if (!id) {
       const message = 'ID is missing.';
@@ -55,7 +75,11 @@ module.exports = (app) => {
     }
 
     const player = rooms.filter((x) => x.room === room).length;
-    rooms.push({ room, id, name, player });
+    if (player === 0) {
+      rooms.push({ room, id, name, player, max });
+    } else {
+      rooms.push({ room, id, name, player });
+    }
 
     if (!squares.hasOwnProperty(room)) {
       squares[room] = [];
@@ -72,8 +96,10 @@ module.exports = (app) => {
     const data = rooms.filter((x) => x.room === room);
     const message = JSON.stringify({ data, setPlayers: true });
 
+    max = data[0].max;
+
     broadcastRoom(room, message);
-    res.json({ success: true });
+    res.json({ success: true, max });
   });
 
   app.post('/sse/play', (req, res) => {

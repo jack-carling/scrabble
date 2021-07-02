@@ -5,6 +5,11 @@ interface Origin {
   source: String;
   index: number;
 }
+interface Info {
+  code: String;
+  name: String;
+  max: Number;
+}
 
 declare module '@vue/runtime-core' {
   interface State {
@@ -23,6 +28,7 @@ declare module '@vue/runtime-core' {
     lobby: boolean;
     differentRound: [];
     differentCheck: [];
+    game: Info;
   }
 
   interface ComponentCustomProperties {

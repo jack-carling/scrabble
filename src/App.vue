@@ -1,71 +1,13 @@
 <template>
-  <Lobby v-if="lobby" />
-  <transition name="flip">
-    <TurnError v-if="error" />
-  </transition>
-  <Board @incorrect-turn="displayError" />
-  <section class="app">
-    <Turn />
-    <Rack />
-    <Check @incorrect-turn="displayError" />
-    <Score />
-  </section>
+  <router-view />
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-import Lobby from './components/Lobby.vue';
-import TurnError from './components/TurnError.vue';
-import Board from './components/Board.vue';
-import Turn from './components/Turn.vue';
-import Rack from './components/Rack.vue';
-import Check from './components/Check.vue';
-import Score from './components/Score.vue';
-
 export default defineComponent({
-  components: {
-    Lobby,
-    TurnError,
-    Board,
-    Turn,
-    Rack,
-    Check,
-    Score,
-  },
-  data() {
-    return {
-      error: false,
-      timeout: 0,
-    };
-  },
-  computed: {
-    id(): string {
-      return this.$store.state.id;
-    },
-    lobby(): boolean {
-      return this.$store.state.lobby;
-    },
-  },
-  methods: {
-    displayError() {
-      window.clearTimeout(this.timeout);
-      this.error = true;
-      this.timeout = window.setTimeout(() => {
-        this.error = false;
-      }, 2000);
-    },
-  },
-  async mounted() {
+  mounted() {
     this.$store.dispatch('startSSE');
-  },
-  watch: {
-    async id() {
-      const name = prompt('What is your name?') || 'Player';
-      const room = 'ABC123';
-      let res: any = await fetch(`/sse/join?id=${this.id}&name=${name}&room=${room}`, { method: 'POST' });
-      res = await res.json();
-    },
   },
 });
 </script>
@@ -81,17 +23,11 @@ export default defineComponent({
 body {
   margin: 0;
   padding: 1rem;
+  display: flex;
+  justify-content: center;
   background-color: $main-bg-color;
   color: $main-text-color;
   font-family: $default;
-}
-section.app {
-  max-width: 100%;
-}
-#app {
-  display: grid;
-  grid-template-columns: 6.8fr 3.2fr;
-  gap: 1rem;
 }
 button {
   @include no-appearance;
@@ -109,11 +45,6 @@ button:hover {
 }
 p {
   margin: 0.5rem 0;
-}
-@media only screen and (min-width: 1150px) {
-  #app {
-    grid-template-columns: 750px 1fr;
-  }
 }
 .flip-enter-active {
   animation: flipInY;

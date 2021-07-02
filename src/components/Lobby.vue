@@ -2,6 +2,7 @@
   <main>
     <section>
       <span> Waiting for everyone to join...</span>
+      <span>{{ code }}</span>
       <span>{{ players }} / {{ max }}</span>
       <div class="loading"></div>
       <button>Cancel</button>
@@ -20,9 +21,17 @@ export default defineComponent({
     max(): number {
       return this.$store.state.max;
     },
+    code(): String {
+      return this.$store.state.game.code;
+    },
   },
   watch: {
     players() {
+      if (this.players === this.max) {
+        this.$store.commit('setLobby', false);
+      }
+    },
+    max() {
       if (this.players === this.max) {
         this.$store.commit('setLobby', false);
       }

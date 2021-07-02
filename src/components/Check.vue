@@ -130,7 +130,7 @@ export default defineComponent({
 
       let results = [];
 
-      for await (let word of this.round) {
+      for (let word of this.round) {
         let res: any = await fetch(`/api?word=${word}`);
         res = await res.json();
         results.push(res);
