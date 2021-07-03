@@ -9,6 +9,7 @@
       @dragover.prevent="setDropEffect"
       @drop="handleDrop(square, $event)"
       @dragend="handleStop(square)"
+      @contextmenu.prevent="handleRemove(square)"
     />
   </div>
 </template>
@@ -138,6 +139,17 @@ export default defineComponent({
       square.moving = false;
 
       this.handlePlayable();
+    },
+    handleRemove(square: Square) {
+      console.log(square);
+      if (!square.playable) return;
+      if (this.currentPlayer !== this.me) {
+        this.$emit('incorrect-turn');
+        return;
+      }
+      this.$store.commit('returnToRack', square.letter);
+      square.letter = '';
+      square.playable = false;
     },
     handlePlayable() {
       this.$store.commit('clearWords');

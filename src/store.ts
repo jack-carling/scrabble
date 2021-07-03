@@ -22,12 +22,15 @@ export const store = createStore({
     id: '',
     max: 4,
     lobby: true,
+    lobbyError: '',
     differentRound: [],
     differentCheck: [],
     game: {
       code: '',
       name: '',
     },
+    remainingSquares: 100,
+    returnToRack: [],
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -77,6 +80,12 @@ export const store = createStore({
     setMax(state: any, payload: number) {
       state.max = payload;
     },
+    setLobbyError(state: any, payload: string) {
+      state.lobbyError = payload;
+    },
+    returnToRack(state: any, payload: string) {
+      state.returnToRack.push(payload);
+    },
   },
   actions: {
     startSSE({ state }) {
@@ -98,6 +107,9 @@ export const store = createStore({
         }
         if (message.checkBoard) {
           state.differentCheck.push('check');
+        }
+        if (message.remaining) {
+          state.remainingSquares = message.remainingSquares;
         }
       });
     },

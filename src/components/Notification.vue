@@ -1,18 +1,24 @@
 <template>
-  <section>
+  <section class="notification">
     <i class="material-icons">notifications</i>
-    Please wait for your turn!
+    {{ message }}
   </section>
 </template>
 
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-export default defineComponent({});
+export default defineComponent({
+  props: {
+    message: {
+      type: String,
+    },
+  },
+});
 </script>
 
 <style lang="scss" scoped>
-section {
+section.notification {
   position: fixed;
   top: 3rem;
   left: 3rem;
@@ -23,6 +29,7 @@ section {
   align-items: center;
   border: $score-border;
   box-shadow: $shadow;
+  font-size: 0.8rem;
 }
 i {
   margin-right: 0.5rem;

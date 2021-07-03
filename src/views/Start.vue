@@ -1,8 +1,11 @@
 <template>
+  <transition name="flip">
+    <Notification :message="'Game room is full! Please create a new one.'" v-if="error" />
+  </transition>
   <main>
     <img id="logo" src="../assets/logo.png" alt="Logo" draggable="false" />
     <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repudiandae, explicabo.</p>
-    <section v-if="!askName">
+    <section class="start" v-if="!askName">
       <div class="info">
         <strong>JOIN GAME</strong><br />
         <span v-if="!errors.join">{{ infoText[0] }}</span>
@@ -22,7 +25,7 @@
       </label>
       <button @click="joinGame" class="animate__animated" ref="button__join">Join Game</button>
     </section>
-    <section v-if="!askName">
+    <section class="start" v-if="!askName">
       <div class="info">
         <strong>CREATE GAME</strong><br />
         <span>
@@ -43,7 +46,7 @@
       </label>
       <button @click="createGame">Create Game</button>
     </section>
-    <section v-else>
+    <section class="start" v-else>
       <div class="info">
         <strong>{{ headerInfo }}</strong>
         <br />
@@ -68,9 +71,13 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import Notification from '../components/Notification.vue';
 import { generateRandomCode } from '../services/random';
 
 export default defineComponent({
+  components: {
+    Notification,
+  },
   data() {
     return {
       code: '',
@@ -93,9 +100,18 @@ export default defineComponent({
         'Almost ready to start! What is your name?',
         'Almost ready to start! Please enter between 2-12 characters.',
       ],
+      error: false,
+      timeout: 0,
     };
   },
   methods: {
+    displayError() {
+      window.clearTimeout(this.timeout);
+      this.error = true;
+      this.timeout = window.setTimeout(() => {
+        this.error = false;
+      }, 4000);
+    },
     animateButton(button: HTMLElement) {
       button.classList.remove('animate__jello');
       void button.offsetWidth; // Restart animation
@@ -132,7 +148,6 @@ export default defineComponent({
     },
     createGame() {
       const players = Number(this.numberOfPlayers);
-      console.log('creating', players);
       this.code = generateRandomCode();
       this.$store.commit('setGameCode', this.code);
       this.$store.commit('setMax', players);
@@ -153,6 +168,11 @@ export default defineComponent({
         this.$router.push('/game');
       }
     },
+  },
+  mounted() {
+    if (this.$store.state.lobbyError === 'full') {
+      this.displayError();
+    }
   },
   watch: {
     code() {
@@ -184,7 +204,7 @@ main {
     text-align: center;
   }
 }
-section {
+section.start {
   width: 500px;
   display: grid;
   grid-template-columns: 1fr max-content;

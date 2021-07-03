@@ -13,6 +13,7 @@
       :ref="`square${i}`"
     />
   </div>
+  <span>Tiles left: {{ remainingSquares }}</span>
 </template>
 
 <script lang="ts">
@@ -92,6 +93,12 @@ export default defineComponent({
     },
     me(): number {
       return this.$store.state.me;
+    },
+    remainingSquares(): number {
+      return this.$store.state.remainingSquares;
+    },
+    returnToRack(): string[] {
+      return this.$store.state.returnToRack;
     },
   },
   methods: {
@@ -194,6 +201,18 @@ export default defineComponent({
       },
       deep: true,
     },
+    returnToRack: {
+      handler() {
+        const letter = this.returnToRack[this.returnToRack.length - 1];
+        for (let i = 0; i < this.rack.length; i++) {
+          if (!this.rack[i].letter) {
+            this.rack[i].letter = letter;
+            break;
+          }
+        }
+      },
+      deep: true,
+    },
   },
 });
 </script>
@@ -205,5 +224,10 @@ div.rack {
   max-width: 350px;
   height: 50px;
   grid-template-columns: repeat(7, 1fr);
+}
+span {
+  display: inline-block;
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
 }
 </style>

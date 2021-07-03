@@ -26,9 +26,12 @@ declare module '@vue/runtime-core' {
     id: string;
     max: number;
     lobby: boolean;
+    lobbyError: string;
     differentRound: [];
     differentCheck: [];
     game: Info;
+    remainingSquares: number;
+    returnToRack: string[];
   }
 
   interface ComponentCustomProperties {

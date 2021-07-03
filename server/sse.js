@@ -94,10 +94,16 @@ module.exports = (app) => {
     }
 
     const data = rooms.filter((x) => x.room === room);
-    const message = JSON.stringify({ data, setPlayers: true });
 
     max = data[0].max;
 
+    if (player + 1 > max) {
+      const message = 'Room is full.';
+      handleError(res, message);
+      return;
+    }
+
+    const message = JSON.stringify({ data, setPlayers: true });
     broadcastRoom(room, message);
     res.json({ success: true, max });
   });
@@ -148,7 +154,7 @@ module.exports = (app) => {
     }
     const { room } = rooms.find((x) => x.id === id);
 
-    const remaining = squares[room].length;
+    let remaining = squares[room].length;
     if (!remaining) {
       const message = 'No squares remaining';
       handleError(res, message);
@@ -165,6 +171,10 @@ module.exports = (app) => {
       data.push(squares[room][random]);
       squares[room].splice(random, 1);
     }
+
+    remaining = squares[room].length;
+    const message = JSON.stringify({ remainingSquares: remaining, remaining: true });
+    broadcastRoom(room, message);
 
     res.json({ success: true, data: JSON.stringify(data) });
   });

@@ -1,7 +1,7 @@
 <template>
   <Lobby v-if="lobby" />
   <transition name="flip">
-    <TurnError v-if="error" />
+    <Notification :message="'Please wait for your turn!'" v-if="error" />
   </transition>
   <Board @incorrect-turn="displayError" />
   <section class="app">
@@ -16,7 +16,7 @@
 import { defineComponent } from 'vue';
 
 import Lobby from '../components/Lobby.vue';
-import TurnError from '../components/TurnError.vue';
+import Notification from '../components/Notification.vue';
 import Board from '../components/Board.vue';
 import Turn from '../components/Turn.vue';
 import Rack from '../components/Rack.vue';
@@ -31,7 +31,7 @@ interface Info {
 export default defineComponent({
   components: {
     Lobby,
-    TurnError,
+    Notification,
     Board,
     Turn,
     Rack,
@@ -73,8 +73,16 @@ export default defineComponent({
     if (!room || !name) this.$router.push('/');
     let res: any = await fetch(`/sse/join?id=${this.id}&name=${name}&room=${room}&max=${this.max}`, { method: 'POST' });
     res = await res.json();
+
     if (res.success) {
       this.$store.commit('setMax', res.max);
+    } else {
+      if (res.message === 'Error: Room is full.') {
+        this.$store.commit('setLobbyError', 'full');
+        this.$router.push('/');
+      } else {
+        this.$router.push('/');
+      }
     }
   },
 });
