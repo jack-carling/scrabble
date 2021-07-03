@@ -13,10 +13,12 @@ Interpretation of the classic word game scrabble. Using the HTML Drag and Drop A
 - [x] Handle and display scores
 - [x] Randomly distribute tiles to racks
 - [x] SSE - turn based
+- [x] SSE - allow more than 2 users
+- [x] User can create their own rooms
 - [ ] User can skip a turn
 - [ ] User can swap out letters
-- [ ] SSE - allow more than 2 users
-- [ ] User can create their own rooms
+- [ ] Handle user disconnected
+- [ ] Handle end of game
 
 ## Installation
 
