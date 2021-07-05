@@ -4,6 +4,10 @@ interface Origin {
   source: String;
   index: number;
 }
+interface Data {
+  id: String;
+  disconnected: Boolean;
+}
 
 let SSE: EventSource;
 
@@ -31,6 +35,7 @@ export const store = createStore({
     },
     remainingSquares: 100,
     returnToRack: [],
+    playerData: [],
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -60,13 +65,22 @@ export const store = createStore({
       } else {
         state.currentPlayer++;
       }
-      if (state.words.length === 1) {
+      do {
+        if (!state.playerData[state.currentPlayer].disconnected) break;
+        state.currentPlayer++;
+      } while (state.playerData[state.currentPlayer].disconnected);
+
+      state.previousPlayer = state.currentPlayer - 1;
+      if (state.previousPlayer < 0) {
+        state.previousPlayer = state.players.length - 1;
+      }
+      /*if (state.words.length === 1) {
         state.previousPlayer = 0;
       } else if (state.previousPlayer === state.players.length - 1) {
         state.previousPlayer = 0;
       } else {
         state.previousPlayer++;
-      }
+      }*/
     },
     setLobby(state: any, payload: boolean) {
       state.lobby = payload;
@@ -100,6 +114,7 @@ export const store = createStore({
             if (data.id === state.id) state.me = data.player;
             state.players[data.player] = data.name;
             state.playerScore[data.player] = 0;
+            state.playerData[data.player] = { id: data.id, disconnected: false };
           }
         }
         if (message.setBoard) {
@@ -110,6 +125,10 @@ export const store = createStore({
         }
         if (message.remaining) {
           state.remainingSquares = message.remainingSquares;
+        }
+        if (message.disconnect) {
+          const index = state.playerData.findIndex((x: Data) => x.id === message.id);
+          state.playerData[index].disconnected = true;
         }
       });
     },

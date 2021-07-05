@@ -46,6 +46,11 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+interface Data {
+  id: String;
+  disconnected: Boolean;
+}
+
 export default defineComponent({
   data() {
     return {
@@ -54,6 +59,7 @@ export default defineComponent({
       scrollTop: 0,
       confirmSkip: false,
       confirmSwap: false,
+      checkDisconnections: [] as String[],
     };
   },
   computed: {
@@ -77,6 +83,9 @@ export default defineComponent({
     },
     differentCheck(): string[] {
       return this.$store.state.differentCheck;
+    },
+    playerData(): Data[] {
+      return this.$store.state.playerData;
     },
   },
   emits: ['incorrect-turn'],
@@ -182,20 +191,44 @@ export default defineComponent({
       }
       this.scrollTop = top;
     },
+    handleNextPlayer() {
+      //Skip a turn, remove all letters beloning to player
+      this.$store.commit('setWords', '*SKIP*');
+      this.$store.commit('handleRound');
+    },
   },
   watch: {
     info() {
+      if (!this.autoScroll) return;
       window.setTimeout(() => {
-        if (this.autoScroll) {
-          const container = this.$refs.container as HTMLElement;
-          const top = container.scrollHeight;
-          container.scrollTo({ top, behavior: 'smooth' });
-        }
+        const container = this.$refs.container as HTMLElement;
+        const top = container.scrollHeight;
+        container.scrollTo({ top, behavior: 'smooth' });
       }, 50);
     },
     differentCheck: {
       handler() {
         if (this.currentPlayer !== this.me) this.checkWord(false);
+      },
+      deep: true,
+    },
+    playerData: {
+      handler() {
+        if (!this.playerData.some((x) => x.disconnected === true)) return;
+        for (let player of this.playerData) {
+          if (player.disconnected) {
+            if (this.checkDisconnections.includes(player.id)) continue;
+            this.checkDisconnections.push(player.id);
+            const index = this.playerData.findIndex((x: Data) => x.id === player.id);
+            const name = this.players[index];
+            this.info += `<div>`;
+            const time = this.displayTime();
+            this.info += `<span class="time">${time}</span>`;
+            this.info += `<span class="error">${name} disconnected.</span>`;
+            this.info += `</div>`;
+            if (this.currentPlayer === index) this.handleNextPlayer();
+          }
+        }
       },
       deep: true,
     },

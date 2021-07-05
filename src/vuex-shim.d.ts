@@ -10,6 +10,10 @@ interface Info {
   name: String;
   max: Number;
 }
+interface Data {
+  id: String;
+  disconnected: Boolean;
+}
 
 declare module '@vue/runtime-core' {
   interface State {
@@ -32,6 +36,7 @@ declare module '@vue/runtime-core' {
     game: Info;
     remainingSquares: number;
     returnToRack: string[];
+    playerData: Data[];
   }
 
   interface ComponentCustomProperties {

@@ -560,7 +560,17 @@ export default defineComponent({
   watch: {
     words: {
       handler() {
-        this.makeAllWordsUnplayable();
+        if (this.words[this.words.length - 1].includes('*SKIP*')) {
+          for (let i = 0; i < this.board.length; i++) {
+            if (this.board[i].playable) {
+              this.board[i].letter = '';
+              this.board[i].playable = false;
+              this.board[i].score = 0;
+            }
+          }
+        } else {
+          this.makeAllWordsUnplayable();
+        }
       },
       deep: true,
     },

@@ -17,8 +17,11 @@ module.exports = (app) => {
       const index = rooms.findIndex((x) => x.id === id);
       if (index === -1) return;
       const room = rooms[index]?.room;
+      const name = rooms[index].name;
       rooms.splice(index, 1);
       if (!room) return;
+      const message = JSON.stringify({ name, id, disconnect: true });
+      broadcastRoom(room, message);
       const checkRooms = rooms.filter((x) => x.room === room).length;
       if (!checkRooms) {
         delete squares[room];
@@ -103,7 +106,7 @@ module.exports = (app) => {
       return;
     }
 
-    const message = JSON.stringify({ data, setPlayers: true });
+    const message = JSON.stringify({ data, id, setPlayers: true });
     broadcastRoom(room, message);
     res.json({ success: true, max });
   });
