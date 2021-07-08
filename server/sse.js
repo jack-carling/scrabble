@@ -190,9 +190,11 @@ module.exports = (app) => {
       return;
     }
     const info = rooms.find((x) => x.id === id);
+    if (!info) return;
     const { name, room } = info;
     const message = JSON.stringify({ name, id, skip: true });
     broadcastRoom(room, message);
+    res.json({ success: true });
   });
 };
 

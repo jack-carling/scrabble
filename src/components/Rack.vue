@@ -37,36 +37,7 @@ interface Origin {
 export default defineComponent({
   data() {
     return {
-      rack: [
-        {
-          letter: '',
-          moving: false,
-        },
-        {
-          letter: '',
-          moving: false,
-        },
-        {
-          letter: '',
-          moving: false,
-        },
-        {
-          letter: '',
-          moving: false,
-        },
-        {
-          letter: '',
-          moving: false,
-        },
-        {
-          letter: '',
-          moving: false,
-        },
-        {
-          letter: '',
-          moving: false,
-        },
-      ] as Array<Square>,
+      rack: [] as Array<Square>,
       returnToRackIndex: 0,
     };
   },
@@ -178,7 +149,6 @@ export default defineComponent({
     words: {
       async handler() {
         if (this.previousPlayer !== this.me) return;
-        if (this.words[this.words.length - 1].includes('*SKIP*')) return;
 
         let count = 7;
         for (let square of this.rack) {

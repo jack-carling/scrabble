@@ -2,6 +2,7 @@
   <main>
     <img id="logo" src="../assets/logo.png" alt="Logo" draggable="false" />
     <section>
+      <i class="material-icons leave" @click="leaveLobby()">cancel</i>
       <div class="info">
         <strong>LOBBY</strong><br />
         <span>Waiting for everyone to join...</span>
@@ -11,10 +12,10 @@
         <span>{{ players }} / {{ max }}</span>
       </div>
       <label for="code">
-        <div>Code</div>
-        <input type="text" id="code" v-model="code" readonly />
+        <div>{{ codeText }}</div>
+        <input type="text" id="code" ref="code" v-model="code" readonly />
       </label>
-      <button @click="leaveLobby()">Leave Lobby</button>
+      <button @click="copyCode">Copy</button>
     </section>
   </main>
 </template>
@@ -23,6 +24,11 @@
 import { defineComponent } from 'vue';
 
 export default defineComponent({
+  data() {
+    return {
+      codeText: 'Code',
+    };
+  },
   computed: {
     players(): number {
       return this.$store.state.players.length;
@@ -50,6 +56,12 @@ export default defineComponent({
     leaveLobby() {
       window.location.reload();
     },
+    copyCode() {
+      const code = this.$refs.code as HTMLInputElement;
+      code.select();
+      document.execCommand('copy');
+      this.codeText += ' • Copied to clipboard!';
+    },
   },
 });
 </script>
@@ -66,6 +78,7 @@ main {
   display: flex;
   flex-direction: column;
   align-items: center;
+  padding: 1rem;
   button {
     margin-top: 1rem;
     min-width: 120px;
@@ -78,6 +91,7 @@ section {
   padding: 1rem;
   display: grid;
   grid-template-columns: 1fr max-content;
+  position: relative;
   label {
     font-size: 0.7rem;
     margin-right: 1rem;
@@ -85,6 +99,16 @@ section {
     select {
       margin-top: 0.2rem;
     }
+  }
+  i.leave {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    cursor: pointer;
+    opacity: 0.5;
+  }
+  i.leave:hover {
+    opacity: 0.75;
   }
 }
 div.loading {

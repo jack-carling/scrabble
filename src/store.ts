@@ -36,6 +36,7 @@ export const store = createStore({
     remainingSquares: 100,
     returnToRack: [],
     playerData: [],
+    disconnections: [],
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -48,6 +49,9 @@ export const store = createStore({
     },
     setWords(state: any, payload: string[]) {
       state.round = payload;
+      if (payload.includes('*SKIP*')) {
+        state.wordScore = 0;
+      }
     },
     setLoading(state: any, payload: boolean) {
       state.loading = payload;
@@ -65,10 +69,6 @@ export const store = createStore({
       } else {
         state.currentPlayer++;
       }
-      do {
-        if (!state.playerData[state.currentPlayer].disconnected) break;
-        state.currentPlayer++;
-      } while (state.playerData[state.currentPlayer].disconnected);
 
       state.previousPlayer = state.currentPlayer - 1;
       if (state.previousPlayer < 0) {
@@ -107,7 +107,7 @@ export const store = createStore({
             if (data.id === state.id) state.me = data.player;
             state.players[data.player] = data.name;
             state.playerScore[data.player] = 0;
-            state.playerData[data.player] = { id: data.id, disconnected: false };
+            state.playerData[data.player] = data.id;
           }
         }
         if (message.setBoard) {
@@ -120,8 +120,14 @@ export const store = createStore({
           state.remainingSquares = message.remainingSquares;
         }
         if (message.disconnect) {
-          const index = state.playerData.findIndex((x: Data) => x.id === message.id);
-          state.playerData[index].disconnected = true;
+          const index = state.playerData.indexOf(message.id);
+          const name = state.players[index];
+          state.disconnections.push(name);
+          state.players.splice(1, index);
+          state.playerScore.splice(1, index);
+          state.playerData.splice(1, index);
+          const me = state.playerData.indexOf(state.id);
+          state.me = me;
         }
         if (message.skip) {
           commit('setWords', '*SKIP*');

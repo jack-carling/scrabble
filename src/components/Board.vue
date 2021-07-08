@@ -144,7 +144,6 @@ export default defineComponent({
       this.handlePlayable();
     },
     handleRemove(square: Square) {
-      console.log(square);
       if (!square.playable) return;
       if (this.currentPlayer !== this.me) {
         this.$emit('incorrect-turn');
@@ -153,6 +152,7 @@ export default defineComponent({
       this.$store.commit('returnToRack', square.letter);
       square.letter = '';
       square.playable = false;
+      this.handlePlayable();
     },
     handlePlayable() {
       this.$store.commit('clearWords');

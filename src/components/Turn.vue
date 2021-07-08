@@ -8,7 +8,7 @@
       <div v-for="(player, i) in players" :key="i" :style="{ left: spaces[i] + 'px' }"></div>
     </div>
     <div class="names">
-      <span v-for="(player, i) in players" :key="i" :class="{ disconnected: playerData[i].disconnected }">
+      <span v-for="(player, i) in players" :key="i">
         {{ player }}
       </span>
     </div>
@@ -17,11 +17,6 @@
 
 <script lang="ts">
 import { defineComponent } from 'vue';
-
-interface Data {
-  id: String;
-  disconnected: Boolean;
-}
 
 export default defineComponent({
   data() {
@@ -48,9 +43,6 @@ export default defineComponent({
       } else {
         return `${name}'s turn`;
       }
-    },
-    playerData(): Data[] {
-      return this.$store.state.playerData;
     },
   },
   mounted() {
@@ -140,10 +132,6 @@ div.names {
     width: 100%;
     text-align: center;
     font-size: 0.8rem;
-  }
-  span.disconnected {
-    opacity: 0.25;
-    color: $error-color;
   }
 }
 span.current {

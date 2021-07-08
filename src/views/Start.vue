@@ -4,7 +4,6 @@
   </transition>
   <main>
     <img id="logo" src="../assets/logo.png" alt="Logo" draggable="false" />
-    <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Repudiandae, explicabo.</p>
     <section class="start" v-if="!askName">
       <div class="info">
         <strong>JOIN GAME</strong><br />
@@ -229,7 +228,7 @@ section.start {
   grid-template-columns: 1fr max-content;
   border: 1px solid $loading-bg;
   padding: 1rem;
-  margin-bottom: 2rem;
+  margin-top: 2rem;
   div.info {
     grid-column: 1 / 3;
     margin-bottom: 1.5rem;

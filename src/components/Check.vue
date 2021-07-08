@@ -46,11 +46,6 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
-interface Data {
-  id: String;
-  disconnected: Boolean;
-}
-
 export default defineComponent({
   data() {
     return {
@@ -87,8 +82,8 @@ export default defineComponent({
     differentCheck(): string[] {
       return this.$store.state.differentCheck;
     },
-    playerData(): Data[] {
-      return this.$store.state.playerData;
+    disconnections(): string[] {
+      return this.$store.state.disconnections;
     },
     words(): string[][] {
       return this.$store.state.words;
@@ -222,23 +217,14 @@ export default defineComponent({
       },
       deep: true,
     },
-    playerData: {
+    disconnections: {
       handler() {
-        if (!this.playerData.some((x) => x.disconnected === true)) return;
-        for (let player of this.playerData) {
-          if (player.disconnected) {
-            if (this.checkDisconnections.includes(player.id)) continue;
-            this.checkDisconnections.push(player.id);
-            const index = this.playerData.findIndex((x: Data) => x.id === player.id);
-            const name = this.players[index];
-            this.info += `<div>`;
-            const time = this.displayTime();
-            this.info += `<span class="time">${time}</span>`;
-            this.info += `<span class="error">${name} disconnected.</span>`;
-            this.info += `</div>`;
-            if (this.currentPlayer === index) this.handleNextPlayer();
-          }
-        }
+        const name = this.disconnections[this.disconnections.length - 1];
+        this.info += `<div>`;
+        const time = this.displayTime();
+        this.info += `<span class="time">${time}</span>`;
+        this.info += `<span class="error">${name} disconnected.</span>`;
+        this.info += `</div>`;
       },
       deep: true,
     },

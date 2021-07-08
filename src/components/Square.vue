@@ -127,4 +127,21 @@ div.score {
   align-items: center;
   box-shadow: 2.5px 2.5px rgba($color: #000000, $alpha: 0.25);
 }
+@media screen and (max-width: 1000px) {
+  div.tw,
+  div.tl,
+  div.dw,
+  div.dl {
+    font-size: 0.8rem;
+    ::v-deep(i) {
+      font-size: 16px;
+    }
+  }
+  div.letter {
+    font-size: 1.3rem;
+  }
+  span.score {
+    font-size: 0.7rem;
+  }
+}
 </style>
