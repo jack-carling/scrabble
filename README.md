@@ -16,7 +16,7 @@ Interpretation of the classic word game scrabble. Using the HTML Drag and Drop A
 - [x] SSE - allow more than 2 users
 - [x] User can create their own rooms
 - [x] Handle user disconnected
-- [ ] User can skip a turn
+- [x] User can skip a turn
 - [ ] User can swap out letters
 - [ ] Handle end of game
 - [ ] Handle only one player left after user(s) disconnected

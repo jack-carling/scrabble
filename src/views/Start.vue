@@ -21,6 +21,7 @@
           v-model="code"
           @keyup.enter="joinGame"
           autocomplete="off"
+          ref="join"
         />
       </label>
       <button @click="joinGame" class="animate__animated" ref="button__join">Join Game</button>
@@ -61,7 +62,15 @@
       </div>
       <label for="name">
         <div ref="label__name">Name</div>
-        <input type="text" id="name" maxlength="12" v-model="name" @keyup.enter="handleName" autocomplete="off" />
+        <input
+          type="text"
+          id="name"
+          maxlength="12"
+          v-model="name"
+          @keyup.enter="handleName"
+          autocomplete="off"
+          ref="name"
+        />
       </label>
       <button @click="handleName" class="animate__animated" ref="button__join">Continue</button>
     </section>
@@ -143,6 +152,10 @@ export default defineComponent({
         this.$store.commit('setGameCode', this.code);
         this.headerInfo = 'JOINING GAME';
         this.askName = true;
+        this.$nextTick(() => {
+          const input = this.$refs.name as HTMLInputElement;
+          input.focus();
+        });
       }
       this.loading = false;
     },
@@ -153,6 +166,10 @@ export default defineComponent({
       this.$store.commit('setMax', players);
       this.headerInfo = 'CREATING GAME';
       this.askName = true;
+      this.$nextTick(() => {
+        const input = this.$refs.name as HTMLInputElement;
+        input.focus();
+      });
     },
     handleName() {
       const label = this.$refs.label__name as HTMLElement;
@@ -173,6 +190,8 @@ export default defineComponent({
     if (this.$store.state.lobbyError === 'full') {
       this.displayError();
     }
+    const input = this.$refs.join as HTMLInputElement;
+    input.focus();
   },
   watch: {
     code() {

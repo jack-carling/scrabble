@@ -69,6 +69,9 @@ export default defineComponent({
     currentPlayer(): number {
       return this.$store.state.currentPlayer;
     },
+    previousPlayer(): number {
+      return this.$store.state.previousPlayer;
+    },
     me(): number {
       return this.$store.state.me;
     },
@@ -434,6 +437,11 @@ export default defineComponent({
         return;
       }
 
+      if (this.words.every((word) => word.includes('*SKIP*'))) {
+        this.handleFirstWord();
+        return;
+      }
+
       for (let i = 0; i < this.round.length; i++) {
         const index = this.round[i].index;
         if (this.board[index - 15]?.letter) {
@@ -561,16 +569,18 @@ export default defineComponent({
     words: {
       handler() {
         if (this.words[this.words.length - 1].includes('*SKIP*')) {
+          let letter = '';
           for (let i = 0; i < this.board.length; i++) {
             if (this.board[i].playable) {
+              letter = this.board[i].letter;
               this.board[i].letter = '';
-              this.board[i].playable = false;
-              this.board[i].score = 0;
+              if (this.previousPlayer === this.me) {
+                this.$store.commit('returnToRack', letter);
+              }
             }
           }
-        } else {
-          this.makeAllWordsUnplayable();
         }
+        this.makeAllWordsUnplayable();
       },
       deep: true,
     },

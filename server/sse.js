@@ -181,6 +181,19 @@ module.exports = (app) => {
 
     res.json({ success: true, data: JSON.stringify(data) });
   });
+
+  app.post('/sse/skip', (req, res) => {
+    const id = req.query.id;
+    if (!id) {
+      const message = 'ID is missing.';
+      handleError(res, message);
+      return;
+    }
+    const info = rooms.find((x) => x.id === id);
+    const { name, room } = info;
+    const message = JSON.stringify({ name, id, skip: true });
+    broadcastRoom(room, message);
+  });
 };
 
 function broadcastRoom(room, message) {

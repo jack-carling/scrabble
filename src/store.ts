@@ -74,13 +74,6 @@ export const store = createStore({
       if (state.previousPlayer < 0) {
         state.previousPlayer = state.players.length - 1;
       }
-      /*if (state.words.length === 1) {
-        state.previousPlayer = 0;
-      } else if (state.previousPlayer === state.players.length - 1) {
-        state.previousPlayer = 0;
-      } else {
-        state.previousPlayer++;
-      }*/
     },
     setLobby(state: any, payload: boolean) {
       state.lobby = payload;
@@ -102,7 +95,7 @@ export const store = createStore({
     },
   },
   actions: {
-    startSSE({ state }) {
+    startSSE({ state, commit }) {
       SSE = new EventSource('/sse');
       SSE.addEventListener('message', (event) => {
         const message = JSON.parse(event.data);
@@ -129,6 +122,10 @@ export const store = createStore({
         if (message.disconnect) {
           const index = state.playerData.findIndex((x: Data) => x.id === message.id);
           state.playerData[index].disconnected = true;
+        }
+        if (message.skip) {
+          commit('setWords', '*SKIP*');
+          commit('handleRound');
         }
       });
     },

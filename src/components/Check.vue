@@ -14,7 +14,7 @@
         <transition name="fade">
           <span v-if="confirmSkip">
             Are you sure?
-            <i class="material-icons yes">check_circle</i>
+            <i class="material-icons yes" @click="skipTurn">check_circle</i>
             <i class="material-icons no" @click="confirmSkip = false">cancel</i>
           </span>
         </transition>
@@ -75,6 +75,9 @@ export default defineComponent({
     currentPlayer(): number {
       return this.$store.state.currentPlayer;
     },
+    previousPlayer(): number {
+      return this.$store.state.previousPlayer;
+    },
     me(): number {
       return this.$store.state.me;
     },
@@ -86,6 +89,9 @@ export default defineComponent({
     },
     playerData(): Data[] {
       return this.$store.state.playerData;
+    },
+    words(): string[][] {
+      return this.$store.state.words;
     },
   },
   emits: ['incorrect-turn'],
@@ -192,9 +198,13 @@ export default defineComponent({
       this.scrollTop = top;
     },
     handleNextPlayer() {
-      //Skip a turn, remove all letters beloning to player
       this.$store.commit('setWords', '*SKIP*');
       this.$store.commit('handleRound');
+    },
+    async skipTurn() {
+      this.confirmSkip = false;
+      let res = await fetch(`/sse/skip?id=${this.id}`, { method: 'POST' });
+      res = await res.json();
     },
   },
   watch: {
@@ -228,6 +238,24 @@ export default defineComponent({
             this.info += `</div>`;
             if (this.currentPlayer === index) this.handleNextPlayer();
           }
+        }
+      },
+      deep: true,
+    },
+    words: {
+      handler() {
+        if (this.words[this.words.length - 1].includes('*SKIP*')) {
+          let name = '';
+          if (this.previousPlayer === this.me) {
+            name = 'You';
+          } else {
+            name = this.players[this.previousPlayer];
+          }
+          this.info += `<div>`;
+          const time = this.displayTime();
+          this.info += `<span class="time">${time}</span>`;
+          this.info += `<span>${name} skipped a turn.</span>`;
+          this.info += `</div>`;
         }
       },
       deep: true,

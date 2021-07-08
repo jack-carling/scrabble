@@ -67,6 +67,7 @@ export default defineComponent({
           moving: false,
         },
       ] as Array<Square>,
+      returnToRackIndex: 0,
     };
   },
   components: {
@@ -177,6 +178,7 @@ export default defineComponent({
     words: {
       async handler() {
         if (this.previousPlayer !== this.me) return;
+        if (this.words[this.words.length - 1].includes('*SKIP*')) return;
 
         let count = 7;
         for (let square of this.rack) {
@@ -203,13 +205,17 @@ export default defineComponent({
     },
     returnToRack: {
       handler() {
-        const letter = this.returnToRack[this.returnToRack.length - 1];
-        for (let i = 0; i < this.rack.length; i++) {
-          if (!this.rack[i].letter) {
-            this.rack[i].letter = letter;
-            break;
+        for (let i = this.returnToRackIndex; i < this.returnToRack.length; i++) {
+          console.log(this.returnToRack[i]);
+          const letter = this.returnToRack[i];
+          for (let i = 0; i < this.rack.length; i++) {
+            if (!this.rack[i].letter) {
+              this.rack[i].letter = letter;
+              break;
+            }
           }
         }
+        this.returnToRackIndex = this.returnToRack.length;
       },
       deep: true,
     },
