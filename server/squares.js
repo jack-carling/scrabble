@@ -93,6 +93,8 @@ const squares = [
   { letter: 'Y' },
   { letter: 'Y' },
   { letter: 'K' },
+  { letter: 'K' },
+  { letter: 'J' },
   { letter: 'J' },
   { letter: 'X' },
   { letter: 'Q' },
@@ -100,5 +102,3 @@ const squares = [
 ];
 
 module.exports = squares;
-
-// ADD 2 BLANK TILES

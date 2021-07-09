@@ -141,9 +141,9 @@ export default defineComponent({
       let results = [];
 
       for (let word of this.round) {
-        let res: any = await fetch(`/api?word=${word}`);
-        res = await res.json();
-        results.push(res);
+        const response: Response = await fetch(`/api?word=${word}`);
+        const data = await response.json();
+        results.push(data);
       }
 
       const successAll = results.every((result) => result.success === true);
@@ -291,15 +291,15 @@ div.loading {
   height: 25px;
   margin-left: 0.5rem;
   border-radius: 50%;
-  border: 5px solid $bg-empty;
+  border: 5px solid $empty-bg;
   border-top: 5px solid $loading-bg;
-  background-color: $main-bg-color;
+  background-color: $default-bg;
   animation: spin 1s linear infinite;
 }
 div.container {
   width: 100%;
   border: 1px solid $loading-bg;
-  background-color: $bg-letter;
+  background-color: $letter-bg;
   height: 200px;
   margin-top: 1rem;
   padding: 0.5rem 1rem 0.5rem 0.5rem;
@@ -346,7 +346,7 @@ div.checkbox {
     width: 14px;
     height: 14px;
     border: 1px solid $loading-bg;
-    background-color: $bg-letter;
+    background-color: $letter-bg;
     display: grid;
     place-items: center;
   }

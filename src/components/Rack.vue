@@ -21,23 +21,12 @@ import { defineComponent } from 'vue';
 
 import Square from './Square.vue';
 
-interface Square {
-  letter: string;
-  premium: string;
-  moving: boolean;
-  playable: boolean;
-  error: boolean;
-  score: number;
-}
-interface Origin {
-  source: String;
-  index: number;
-}
+import { Squares, Origin, LetterOrigin, SSE } from '../services/interfaces';
 
 export default defineComponent({
   data() {
     return {
-      rack: [] as Array<Square>,
+      rack: [] as Squares[],
       returnToRackIndex: 0,
     };
   },
@@ -79,22 +68,24 @@ export default defineComponent({
       const height = rack.clientWidth / 350;
       rack.style.height = height * 50 + 'px';
     },
-    handleDrag(square: Square, index: number, e: any) {
+    handleDrag(square: Squares, index: number, e: DragEvent) {
       if (!square.letter || this.loading) {
         e.preventDefault();
         return;
       }
-      e.dataTransfer.effectAllowed = 'move';
+      if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
       square.moving = true;
       const data = JSON.stringify({ letter: square.letter, index, origin: 'rack' });
-      e.dataTransfer.setData('text/plain', data);
+      e.dataTransfer?.setData('text/plain', data);
     },
-    setDropEffect(e: any) {
-      e.dataTransfer.dropEffect = 'move';
+    setDropEffect(e: DragEvent) {
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
     },
-    handleDrop(square: Square, e: any) {
-      let data = e.dataTransfer.getData('text/plain');
-      data = JSON.parse(data);
+    handleDrop(square: Squares, e: DragEvent) {
+      const transfer = e.dataTransfer?.getData('text/plain');
+      if (!transfer) return;
+      const data: LetterOrigin = JSON.parse(transfer);
+
       if (data.origin === 'board') {
         if (square.letter) {
           e.preventDefault();
@@ -110,15 +101,15 @@ export default defineComponent({
       }
       square.letter = data.letter;
     },
-    handleStop(square: Square) {
+    handleStop(square: Squares) {
       square.moving = false;
     },
     animateSquare(i: number) {
-      const square = this.$refs[`square${i}`] as any;
+      const square = (this.$refs[`square${i}`] as any).$el as HTMLElement;
       this.$nextTick(() => {
-        square.$el.classList.remove('animate__bounce');
+        square.classList.remove('animate__bounce');
         void square.offsetWidth; // Restart animation
-        square.$el.classList.add('animate__bounce');
+        square.classList.add('animate__bounce');
       });
     },
   },
@@ -139,11 +130,12 @@ export default defineComponent({
       deep: true,
     },
     async lobby() {
-      let res: any = await fetch(`/sse/squares?id=${this.id}&count=7`);
-      res = await res.json();
-      if (res.success) {
-        const data = JSON.parse(res.data);
-        this.rack = [...data];
+      const response: Response = await fetch(`/sse/squares?id=${this.id}&count=7`);
+      const data: SSE = await response.json();
+      if (data.success) {
+        if (!data.data) return;
+        const squares = JSON.parse(data.data);
+        this.rack = [...squares];
       }
     },
     words: {
@@ -158,13 +150,14 @@ export default defineComponent({
         }
         if (!count) return;
 
-        let res: any = await fetch(`/sse/squares?id=${this.id}&count=${count}`);
-        res = await res.json();
-        if (res.success) {
-          const data = JSON.parse(res.data);
+        const response: Response = await fetch(`/sse/squares?id=${this.id}&count=${count}`);
+        const data: SSE = await response.json();
+        if (data.success) {
+          if (!data.data) return;
+          const squares = JSON.parse(data.data);
           for (let i = 0; i < this.rack.length; i++) {
             if (!this.rack[i].letter) {
-              this.rack[i].letter = data[count - 1].letter;
+              this.rack[i].letter = squares[count - 1].letter;
               this.animateSquare(i);
               count--;
             }

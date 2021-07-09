@@ -1,13 +1,6 @@
-interface Square {
-  letter: string;
-  premium: string;
-  moving: boolean;
-  playable: boolean;
-  error: boolean;
-  score: number;
-}
+import { Squares } from './interfaces';
 
-export function initialize(): Array<Square> {
+export function initialize(): Squares[] {
   let board = [];
 
   for (let x = 0; x < 225; x++) {

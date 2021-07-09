@@ -52,13 +52,13 @@ div.title {
   position: relative;
   span {
     display: inline-block;
-    background-color: $main-bg-color;
+    background-color: $default-bg;
     padding-right: 0.5rem;
   }
   div {
     width: 100%;
     height: 100%;
-    border-top: 1px solid $bg-empty;
+    border-top: 1px solid $empty-bg;
     position: absolute;
     transform: translateY(-50%);
     z-index: -1;

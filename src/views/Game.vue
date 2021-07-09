@@ -23,10 +23,7 @@ import Rack from '../components/Rack.vue';
 import Check from '../components/Check.vue';
 import Score from '../components/Score.vue';
 
-interface Info {
-  code: String;
-  name: String;
-}
+import { Info, SSE } from '../services/interfaces';
 
 export default defineComponent({
   components: {
@@ -71,13 +68,15 @@ export default defineComponent({
     const room = this.game.code;
     const name = this.game.name;
     if (!room || !name) this.$router.push('/');
-    let res: any = await fetch(`/sse/join?id=${this.id}&name=${name}&room=${room}&max=${this.max}`, { method: 'POST' });
-    res = await res.json();
+    const response: Response = await fetch(`/sse/join?id=${this.id}&name=${name}&room=${room}&max=${this.max}`, {
+      method: 'POST',
+    });
+    const data: SSE = await response.json();
 
-    if (res.success) {
-      this.$store.commit('setMax', res.max);
+    if (data.success) {
+      this.$store.commit('setMax', data.max);
     } else {
-      if (res.message === 'Error: Room is full.') {
+      if (data.message === 'Error: Room is full.') {
         this.$store.commit('setLobbyError', 'full');
         this.$router.push('/');
       } else {

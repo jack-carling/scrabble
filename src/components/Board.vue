@@ -21,32 +21,13 @@ import { calculateScore } from '../services/score';
 
 import Square from './Square.vue';
 
-interface Square {
-  letter: string;
-  premium: string;
-  moving: boolean;
-  playable: boolean;
-  error: boolean;
-  score: number;
-}
-interface Origin {
-  source: String;
-  index: number;
-}
-interface Connections {
-  path: string;
-  index: number;
-}
-interface Letters {
-  index: number;
-  letter: string;
-}
+import { Squares, Origin, LetterOrigin, Connections, Letters } from '../services/interfaces';
 
 export default defineComponent({
   data() {
     return {
-      board: [] as Array<Square>,
-      round: [] as Array<Letters>,
+      board: [] as Squares[],
+      round: [] as Letters[],
     };
   },
   components: {
@@ -84,7 +65,7 @@ export default defineComponent({
       const board = this.$refs.board as HTMLElement;
       board.style.height = board.clientWidth + 'px';
     },
-    handleDrag(square: Square, index: number, e: any) {
+    handleDrag(square: Squares, index: number, e: DragEvent) {
       if (!square.letter || this.loading || !square.playable) {
         e.preventDefault();
         return;
@@ -98,23 +79,24 @@ export default defineComponent({
         this.board[i].error = false;
         this.board[i].score = 0;
       }
-      e.dataTransfer.effectAllowed = 'move';
+      if (e.dataTransfer) e.dataTransfer.effectAllowed = 'move';
       square.moving = true;
       const data = JSON.stringify({ letter: square.letter, index, origin: 'board' });
-      e.dataTransfer.setData('text/plain', data);
+      e.dataTransfer?.setData('text/plain', data);
     },
-    setDropEffect(e: any) {
-      e.dataTransfer.dropEffect = 'move';
+    setDropEffect(e: DragEvent) {
+      if (e.dataTransfer) e.dataTransfer.dropEffect = 'move';
     },
-    handleDrop(square: Square, e: any) {
+    handleDrop(square: Squares, e: DragEvent) {
       if (this.currentPlayer !== this.me) {
         e.preventDefault();
         this.$emit('incorrect-turn');
         return;
       }
 
-      let data = e.dataTransfer.getData('text/plain');
-      data = JSON.parse(data);
+      const transfer = e.dataTransfer?.getData('text/plain');
+      if (!transfer) return;
+      const data: LetterOrigin = JSON.parse(transfer);
 
       if (data.origin === 'rack') {
         if (square.letter) {
@@ -138,12 +120,12 @@ export default defineComponent({
 
       this.handlePlayable();
     },
-    handleStop(square: Square) {
+    handleStop(square: Squares) {
       square.moving = false;
 
       this.handlePlayable();
     },
-    handleRemove(square: Square) {
+    handleRemove(square: Squares) {
       if (!square.playable) return;
       if (this.currentPlayer !== this.me) {
         this.$emit('incorrect-turn');
@@ -240,7 +222,7 @@ export default defineComponent({
       }
     },
     handleFirstWord() {
-      let words: Array<string> = [];
+      let words: string[] = [];
       let word = '';
       for (let play of this.round) {
         word += play.letter;
@@ -251,11 +233,11 @@ export default defineComponent({
       this.$store.commit('setWords', words);
       this.handleScore(this.round);
     },
-    handleWords(connections: Array<Connections>, direction: string) {
+    handleWords(connections: Connections[], direction: string) {
       let verticalWords: any = [];
       let horizontalWords: any = [];
 
-      let words: Array<string> = [];
+      let words: string[] = [];
 
       for (let connection of connections) {
         if (connection.path === 'north') {
@@ -327,7 +309,7 @@ export default defineComponent({
       horizontalWords.sort((a: Letters, b: Letters) => (a.index > b.index ? 1 : -1));
       verticalWords.sort((a: Letters, b: Letters) => (a.index > b.index ? 1 : -1));
 
-      let matrix: any = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
+      let matrix: Letters[][] = [[], [], [], [], [], [], [], [], [], [], [], [], [], [], []];
 
       if (!direction) {
         if (horizontalWords.length) {
@@ -430,7 +412,7 @@ export default defineComponent({
         return;
       }
 
-      let connections: Array<Connections> = [];
+      let connections: Connections[] = [];
 
       if (!this.words.length) {
         this.handleFirstWord();
@@ -498,7 +480,7 @@ export default defineComponent({
         }
       }
     },
-    handleScore(data: Array<Letters>) {
+    handleScore(data: Letters[]) {
       let total = 0;
       for (let i = 0; i < data.length; i++) {
         const letter = data[i].letter;

@@ -25,19 +25,19 @@ body {
   padding: 1rem;
   display: flex;
   justify-content: center;
-  background-color: $main-bg-color;
-  color: $main-text-color;
-  font-family: $default;
+  background-color: $default-bg;
+  color: $default-font-color;
+  font-family: $default-font;
 }
 button {
   @include no-appearance;
   border: none;
   cursor: pointer;
-  font-family: $default;
+  font-family: $default-font;
   padding: 0.5rem 1rem;
   border-radius: 999px;
-  background-color: $bg-empty;
-  color: $main-text-color;
+  background-color: $empty-bg;
+  color: $default-font-color;
   outline: none;
 }
 button:hover {

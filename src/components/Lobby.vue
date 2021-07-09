@@ -70,7 +70,7 @@ export default defineComponent({
 main {
   width: 100vw;
   height: 100vh;
-  background-color: $main-bg-color;
+  background-color: $default-bg;
   position: fixed;
   top: 0;
   left: 0;
@@ -115,9 +115,9 @@ div.loading {
   width: 25px;
   height: 25px;
   border-radius: 50%;
-  border: 5px solid $bg-empty;
+  border: 5px solid $empty-bg;
   border-top: 5px solid $loading-bg;
-  background-color: $main-bg-color;
+  background-color: $default-bg;
   animation: spin 2s linear infinite;
   margin-right: 1rem;
 }
@@ -137,7 +137,7 @@ input {
   width: 100%;
   font-size: 16px;
   padding: 5px;
-  font-family: $default;
+  font-family: $default-font;
   appearance: none;
   border: none;
   outline: none;

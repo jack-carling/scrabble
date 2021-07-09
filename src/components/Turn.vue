@@ -98,13 +98,13 @@ section {
 }
 div.turns {
   width: 100%;
-  border-top: 2px solid $main-text-color;
+  border-top: 2px solid $default-font-color;
   position: relative;
   margin-top: 5px;
   div {
     width: 10px;
     height: 10px;
-    background-color: $main-text-color;
+    background-color: $default-font-color;
     position: absolute;
     border-radius: 50%;
     top: -6px;
@@ -119,7 +119,7 @@ div.indicator {
     width: 10px;
     height: 10px;
     position: absolute;
-    background-color: $dl;
+    background-color: $tl;
     clip-path: polygon(100% 0, 0 0, 50% 100%);
     transition: left 1s ease;
   }

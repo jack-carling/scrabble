@@ -82,6 +82,8 @@ import { defineComponent } from 'vue';
 import Notification from '../components/Notification.vue';
 import { generateRandomCode } from '../services/random';
 
+import { SSE } from '../services/interfaces';
+
 export default defineComponent({
   components: {
     Notification,
@@ -138,9 +140,9 @@ export default defineComponent({
         return;
       }
       this.loading = true;
-      let res: any = await fetch(`/sse/lobby?room=${this.code}`);
-      res = await res.json();
-      if (!res.success) {
+      const response: Response = await fetch(`/sse/lobby?room=${this.code}`);
+      const data: SSE = await response.json();
+      if (!data.success) {
         this.errors.join = true;
         this.$nextTick(() => {
           label.classList.add('error');
@@ -255,7 +257,7 @@ input {
   width: 100%;
   font-size: 16px;
   padding: 5px;
-  font-family: $default;
+  font-family: $default-font;
   appearance: none;
   border: none;
   outline: none;
@@ -265,7 +267,7 @@ select {
   width: 100%;
   font-size: 16px;
   padding: 5px;
-  font-family: $default;
+  font-family: $default-font;
   appearance: none;
   border: none;
   outline: none;

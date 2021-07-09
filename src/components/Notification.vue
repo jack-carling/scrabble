@@ -22,17 +22,17 @@ section.notification {
   position: fixed;
   top: 3rem;
   left: 3rem;
-  background-color: $bg-letter;
+  background-color: $letter-bg;
   padding: 0.5rem;
   border-radius: 0.5rem;
   display: flex;
   align-items: center;
   border: $score-border;
-  box-shadow: $shadow;
   font-size: 0.8rem;
+  @include shadow(0.5rem);
 }
 i {
   margin-right: 0.5rem;
-  color: $main-text-color;
+  color: $default-font-color;
 }
 </style>

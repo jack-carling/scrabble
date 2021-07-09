@@ -64,24 +64,24 @@ div.square {
   align-items: center;
 }
 div.empty {
-  background-color: $bg-empty;
+  background-color: $empty-bg;
 }
 div.letter {
-  background-color: $bg-letter;
-  color: $main-text-color;
+  background-color: $letter-bg;
+  color: $default-font-color;
   font-size: 1.5rem;
   position: relative;
 }
 div.moving {
-  background-color: $bg-moving;
+  background-color: $moving-bg;
   border: $moving-border;
 }
 div.playable {
-  background-color: $bg-playable;
+  background-color: $playable-bg;
 }
 span,
 div.score {
-  font-family: $monospace;
+  font-family: $monospace-font;
   @include no-select;
 }
 span.score {
@@ -97,7 +97,7 @@ div.tw,
 div.tl,
 div.dw,
 div.dl {
-  color: $premium-text-color;
+  color: $premium-font-color;
 }
 div.tw {
   background-color: $tw;
@@ -114,7 +114,7 @@ div.dl {
 div.score {
   width: 30px;
   height: 30px;
-  background-color: $bg-letter;
+  background-color: $letter-bg;
   border-radius: 50%;
   font-size: 12px;
   border: $score-border;
@@ -125,7 +125,7 @@ div.score {
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 2.5px 2.5px rgba($color: #000000, $alpha: 0.25);
+  @include shadow(2.5px);
 }
 @media screen and (max-width: 1000px) {
   div.tw,
