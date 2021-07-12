@@ -13,7 +13,6 @@ module.exports = (app) => {
 
     req.on('close', () => {
       delete connections[id];
-      console.log('Connections:', Object.keys(connections).length);
       const index = rooms.findIndex((x) => x.id === id);
       if (index === -1) return;
       const room = rooms[index]?.room;
@@ -27,8 +26,6 @@ module.exports = (app) => {
         delete squares[room];
       }
     });
-
-    console.log('Connections:', Object.keys(connections).length);
 
     res.set({
       'Content-Type': 'text/event-stream',
@@ -195,6 +192,51 @@ module.exports = (app) => {
     const message = JSON.stringify({ name, id, skip: true });
     broadcastRoom(room, message);
     res.json({ success: true });
+  });
+
+  app.post('/sse/swap', (req, res) => {
+    const id = req.query.id;
+    const count = Number(req.body.length);
+    if (!id) {
+      const message = 'ID is missing.';
+      handleError(res, message);
+      return;
+    }
+    if (!count || !Number.isInteger(count)) {
+      const message = 'Count is missing and/or not valid number.';
+      handleError(res, message);
+      return;
+    }
+    if (count < 0 || count > 7) {
+      const message = 'Count cannot be less than 0 or greater than 7.';
+      handleError(res, message);
+      return;
+    }
+    const info = rooms.find((x) => x.id === id);
+    if (!info) return;
+    const { name, room } = info;
+
+    const remaining = squares[room].length;
+    if (!remaining) {
+      const message = 'No squares remaining';
+      handleError(res, message);
+      return;
+    }
+
+    let data = [];
+    for (let i = 0; i < count; i++) {
+      const random = Math.floor(Math.random() * squares[room].length);
+      data.push(squares[room][random]);
+      squares[room].splice(random, 1);
+    }
+
+    for (let i = 0; i < req.body.length; i++) {
+      squares[room].push({ letter: req.body[i] });
+    }
+
+    const message = JSON.stringify({ name, id, swap: true });
+    broadcastRoom(room, message);
+    res.json({ success: true, data: JSON.stringify(data) });
   });
 };
 

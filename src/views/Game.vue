@@ -1,13 +1,13 @@
 <template>
   <Lobby v-if="lobby" />
   <transition name="flip">
-    <Notification :message="'Please wait for your turn!'" v-if="error" />
+    <Notification :message="message" v-if="error" />
   </transition>
-  <Board @incorrect-turn="displayError" />
+  <Board @incorrect-turn="displayError('Please wait for your turn!')" />
   <section class="app">
     <Turn />
     <Rack />
-    <Check @incorrect-turn="displayError" />
+    <Check @incorrect-handle="displayError" />
     <Score />
   </section>
 </template>
@@ -39,6 +39,7 @@ export default defineComponent({
     return {
       error: false,
       timeout: 0,
+      message: '',
     };
   },
   computed: {
@@ -56,7 +57,8 @@ export default defineComponent({
     },
   },
   methods: {
-    displayError() {
+    displayError(message: string) {
+      this.message = message;
       window.clearTimeout(this.timeout);
       this.error = true;
       this.timeout = window.setTimeout(() => {

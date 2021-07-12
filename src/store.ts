@@ -37,6 +37,9 @@ export const store = createStore({
     returnToRack: [],
     playerData: [],
     disconnections: [],
+    swap: false,
+    emptyBoard: true,
+    zeroSquaresSelected: false,
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -52,6 +55,9 @@ export const store = createStore({
       if (payload.includes('*SKIP*')) {
         state.wordScore = 0;
       }
+      if (payload.includes('*SWAP*')) {
+        state.wordScore = 0;
+      }
     },
     setLoading(state: any, payload: boolean) {
       state.loading = payload;
@@ -64,6 +70,7 @@ export const store = createStore({
       state.round = [];
       state.playerScore[state.currentPlayer] += state.wordScore;
       state.wordScore = 0;
+      state.emptyBoard = true;
       if (state.currentPlayer === state.players.length - 1) {
         state.currentPlayer = 0;
       } else {
@@ -92,6 +99,15 @@ export const store = createStore({
     },
     returnToRack(state: any, payload: string) {
       state.returnToRack.push(payload);
+    },
+    setSwap(state: any, payload: boolean) {
+      state.swap = payload;
+    },
+    setEmptyBoard(state: any, payload: boolean) {
+      state.emptyBoard = payload;
+    },
+    setSquaresSelected(state: any, payload: boolean) {
+      state.zeroSquaresSelected = payload;
     },
   },
   actions: {
@@ -131,6 +147,10 @@ export const store = createStore({
         }
         if (message.skip) {
           commit('setWords', '*SKIP*');
+          commit('handleRound');
+        }
+        if (message.swap) {
+          commit('setWords', '*SWAP*');
           commit('handleRound');
         }
       });

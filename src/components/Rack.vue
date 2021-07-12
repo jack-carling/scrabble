@@ -9,6 +9,7 @@
       @dragover.prevent="setDropEffect"
       @drop="handleDrop(square, $event)"
       @dragend="handleStop(square)"
+      @click="handleSwap(square)"
       class="animate__animated"
       :ref="`square${i}`"
     />
@@ -61,6 +62,9 @@ export default defineComponent({
     returnToRack(): string[] {
       return this.$store.state.returnToRack;
     },
+    swap(): boolean {
+      return this.$store.state.swap;
+    },
   },
   methods: {
     handleResize() {
@@ -69,7 +73,7 @@ export default defineComponent({
       rack.style.height = height * 50 + 'px';
     },
     handleDrag(square: Squares, index: number, e: DragEvent) {
-      if (!square.letter || this.loading) {
+      if (!square.letter || this.loading || this.swap) {
         e.preventDefault();
         return;
       }
@@ -103,6 +107,12 @@ export default defineComponent({
     },
     handleStop(square: Squares) {
       square.moving = false;
+    },
+    handleSwap(square: Squares) {
+      if (!this.swap || !square.letter) return;
+      square.swap = !square.swap;
+      const selected = this.rack.every((square) => square.swap === false);
+      this.$store.commit('setSquaresSelected', selected);
     },
     animateSquare(i: number) {
       const square = (this.$refs[`square${i}`] as any).$el as HTMLElement;
@@ -141,6 +151,7 @@ export default defineComponent({
     words: {
       async handler() {
         if (this.previousPlayer !== this.me) return;
+        if (this.words[this.words.length - 1].includes('*SWAP*')) return;
 
         let count = 7;
         for (let square of this.rack) {
@@ -169,7 +180,6 @@ export default defineComponent({
     returnToRack: {
       handler() {
         for (let i = this.returnToRackIndex; i < this.returnToRack.length; i++) {
-          console.log(this.returnToRack[i]);
           const letter = this.returnToRack[i];
           for (let i = 0; i < this.rack.length; i++) {
             if (!this.rack[i].letter) {
@@ -181,6 +191,38 @@ export default defineComponent({
         this.returnToRackIndex = this.returnToRack.length;
       },
       deep: true,
+    },
+    async swap() {
+      if (this.$store.state.round.includes('*SWAP*')) {
+        let swapping: string[] = [];
+        for (let square of this.rack) {
+          if (square.swap) {
+            swapping.push(square.letter);
+            square.letter = '';
+          }
+        }
+        const squares = JSON.stringify(swapping);
+        const response: Response = await fetch(`/sse/swap?id=${this.id}`, {
+          method: 'POST',
+          body: squares,
+          headers: { 'Content-Type': 'application/json' },
+        });
+        const data: SSE = await response.json();
+        if (!data.data) return;
+        const newSquares = JSON.parse(data.data);
+        let count = newSquares.length;
+        for (let i = 0; i < this.rack.length; i++) {
+          if (!this.rack[i].letter) {
+            this.rack[i].letter = newSquares[count - 1].letter;
+            this.rack[i].swap = false;
+            this.animateSquare(i);
+            count--;
+          }
+        }
+      }
+      for (let square of this.rack) {
+        if (square.letter) square.swap = this.swap;
+      }
     },
   },
 });

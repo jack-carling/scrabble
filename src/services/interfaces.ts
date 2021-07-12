@@ -5,6 +5,7 @@ export interface Squares {
   playable: boolean;
   error: boolean;
   score: number;
+  swap: boolean;
 }
 
 export interface Origin {

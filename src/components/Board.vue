@@ -147,7 +147,7 @@ export default defineComponent({
           this.round.push({ letter: this.board[i].letter, index: i });
         }
       }
-      this.round.sort((a, b) => (a.index > b.index ? 1 : -1));
+      this.round.sort((a: Letters, b: Letters) => (a.index > b.index ? 1 : -1));
 
       let direction = '';
 
@@ -419,7 +419,7 @@ export default defineComponent({
         return;
       }
 
-      if (this.words.every((word) => word.includes('*SKIP*'))) {
+      if (this.words.every((word) => word.includes('*SKIP*') || word.includes('*SWAP*'))) {
         this.handleFirstWord();
         return;
       }
@@ -580,6 +580,12 @@ export default defineComponent({
       deep: true,
     },
     async round() {
+      if (!this.round.length) {
+        this.$store.commit('setEmptyBoard', true);
+      } else {
+        this.$store.commit('setEmptyBoard', false);
+      }
+
       if (this.currentPlayer !== this.me) return;
 
       const data = JSON.stringify(this.round);

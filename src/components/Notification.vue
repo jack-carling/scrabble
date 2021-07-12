@@ -19,6 +19,7 @@ export default defineComponent({
 
 <style lang="scss" scoped>
 section.notification {
+  z-index: 999;
   position: fixed;
   top: 3rem;
   left: 3rem;

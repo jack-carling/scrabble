@@ -23,8 +23,8 @@
         <button @click="showConfirmation('swap')" ref="button__swap" class="animate__animated">Swap letters</button>
         <transition name="fade">
           <span v-if="confirmSwap">
-            Are you sure?
-            <i class="material-icons yes">check_circle</i>
+            Confirm selected?
+            <i class="material-icons yes" @click="swapSquares">check_circle</i>
             <i class="material-icons no" @click="confirmSwap = false">cancel</i>
           </span>
         </transition>
@@ -54,7 +54,7 @@ export default defineComponent({
       scrollTop: 0,
       confirmSkip: false,
       confirmSwap: false,
-      checkDisconnections: [] as String[],
+      checkDisconnections: [] as string[],
     };
   },
   computed: {
@@ -88,13 +88,22 @@ export default defineComponent({
     words(): string[][] {
       return this.$store.state.words;
     },
+    emptyBoard(): boolean {
+      return this.$store.state.emptyBoard;
+    },
+    zeroSquaresSelected(): boolean {
+      return this.$store.state.zeroSquaresSelected;
+    },
+    remainingSquares(): number {
+      return this.$store.state.remainingSquares;
+    },
   },
-  emits: ['incorrect-turn'],
+  emits: ['incorrect-handle'],
   methods: {
     showConfirmation(type: string) {
       if (type === 'skip') {
         if (this.currentPlayer !== this.me) {
-          this.$emit('incorrect-turn');
+          this.$emit('incorrect-handle', 'Please wait for your turn!');
           const button = this.$refs.button__skip as HTMLElement;
           this.animateButton(button);
           return;
@@ -104,7 +113,19 @@ export default defineComponent({
       }
       if (type === 'swap') {
         if (this.currentPlayer !== this.me) {
-          this.$emit('incorrect-turn');
+          this.$emit('incorrect-handle', 'Please wait for your turn!');
+          const button = this.$refs.button__swap as HTMLElement;
+          this.animateButton(button);
+          return;
+        }
+        if (this.remainingSquares < 7) {
+          this.$emit('incorrect-handle', 'Not enough tiles left!');
+          const button = this.$refs.button__swap as HTMLElement;
+          this.animateButton(button);
+          return;
+        }
+        if (!this.emptyBoard) {
+          this.$emit('incorrect-handle', 'Please clear the board first!');
           const button = this.$refs.button__swap as HTMLElement;
           this.animateButton(button);
           return;
@@ -120,7 +141,7 @@ export default defineComponent({
     },
     async checkWord(callFetch: boolean) {
       if (this.currentPlayer !== this.me && callFetch) {
-        this.$emit('incorrect-turn');
+        this.$emit('incorrect-handle', 'Please wait for your turn!');
         const button = this.$refs.button__check as HTMLElement;
         this.animateButton(button);
         return;
@@ -201,6 +222,16 @@ export default defineComponent({
       let res = await fetch(`/sse/skip?id=${this.id}`, { method: 'POST' });
       res = await res.json();
     },
+    swapSquares() {
+      if (this.zeroSquaresSelected) {
+        this.$emit('incorrect-handle', 'Please select at least one letter!');
+        const button = this.$refs.button__swap as HTMLElement;
+        this.animateButton(button);
+        return;
+      }
+      this.$store.commit('setWords', '*SWAP*');
+      this.confirmSwap = false;
+    },
   },
   watch: {
     info() {
@@ -230,7 +261,11 @@ export default defineComponent({
     },
     words: {
       handler() {
-        if (this.words[this.words.length - 1].includes('*SKIP*')) {
+        if (
+          this.words[this.words.length - 1].includes('*SKIP*') ||
+          this.words[this.words.length - 1].includes('*SWAP*')
+        ) {
+          const text = this.words[this.words.length - 1].includes('*SKIP*') ? 'skipped a turn' : 'swapped letters';
           let name = '';
           if (this.previousPlayer === this.me) {
             name = 'You';
@@ -240,11 +275,15 @@ export default defineComponent({
           this.info += `<div>`;
           const time = this.displayTime();
           this.info += `<span class="time">${time}</span>`;
-          this.info += `<span>${name} skipped a turn.</span>`;
+          this.info += `<span>${name} ${text}.</span>`;
           this.info += `</div>`;
         }
       },
       deep: true,
+    },
+    confirmSwap() {
+      this.$store.commit('setSwap', this.confirmSwap);
+      if (this.confirmSwap) this.$store.commit('setSquaresSelected', false);
     },
   },
 });
