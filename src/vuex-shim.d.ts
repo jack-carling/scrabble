@@ -34,6 +34,9 @@ declare module '@vue/runtime-core' {
     returnToRack: string[];
     playerData: string[];
     disconnections: string[];
+    swap: boolean;
+    emptyBoard: boolean;
+    zeroSquaresSelected: boolean;
   }
 
   interface ComponentCustomProperties {
