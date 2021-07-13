@@ -120,9 +120,6 @@ export const store = createStore({
   actions: {
     startSSE({ state, commit }) {
       SSE = new EventSource('/sse');
-      window.setInterval(async () => {
-        await fetch('/sse/ping');
-      }, 54000);
       SSE.addEventListener('message', (event) => {
         const message = JSON.parse(event.data);
         if (message.initial) {

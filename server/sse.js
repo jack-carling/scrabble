@@ -34,10 +34,12 @@ module.exports = (app) => {
 
     const message = JSON.stringify({ id, initial: true });
     res.write(`data: ${message} \n\n`);
-  });
 
-  app.get('/sse/ping', (req, res) => {
-    res.json({ success: true });
+    setInterval(() => {
+      for (let id in connections) {
+        connections[id].write(`data: "ping" \n\n`);
+      }
+    }, 50000);
   });
 
   app.get('/sse/lobby', (req, res) => {
