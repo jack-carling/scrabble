@@ -4,6 +4,15 @@
   </transition>
   <main>
     <img id="logo" src="../assets/logo.png" alt="Logo" draggable="false" />
+    <section class="start mobile">
+      <div class="mobile">
+        <i class="material-icons">phone_iphone</i>
+        <span>
+          This game is unfortunately not well supported on mobile devices at the moment. Please enjoy on a desktop
+          computer.
+        </span>
+      </div>
+    </section>
     <section class="start" v-if="!askName">
       <div class="info">
         <strong>JOIN GAME</strong><br />
@@ -238,6 +247,17 @@ section.start {
       font-size: 0.8rem;
     }
   }
+  div.mobile {
+    grid-column: 1 / 3;
+    display: flex;
+    align-items: center;
+    i {
+      margin-right: 1rem;
+    }
+    span {
+      font-size: 0.8rem;
+    }
+  }
   label {
     font-size: 0.7rem;
     margin-right: 1rem;
@@ -250,6 +270,9 @@ section.start {
     color: $error-color;
   }
 }
+section.mobile {
+  display: none;
+}
 #logo {
   max-width: 500px;
 }
@@ -258,7 +281,7 @@ input {
   font-size: 16px;
   padding: 5px;
   font-family: $default-font;
-  appearance: none;
+  @include no-appearance;
   border: none;
   outline: none;
 }
@@ -268,10 +291,11 @@ select {
   font-size: 16px;
   padding: 5px;
   font-family: $default-font;
-  appearance: none;
+  @include no-appearance;
   border: none;
   outline: none;
   cursor: pointer;
+  background-color: #fff;
 }
 div.select {
   position: relative;
@@ -291,6 +315,9 @@ div.select {
   }
   section {
     max-width: 100%;
+  }
+  section.mobile {
+    display: block;
   }
 }
 </style>
