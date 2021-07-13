@@ -18,7 +18,7 @@ Interpretation of the classic word game scrabble. Using the HTML Drag and Drop A
 - [x] Handle user disconnected
 - [x] User can skip a turn
 - [x] User can swap out letters
-- [ ] Handle end of game
+- [x] Handle end of game
 - [x] Handle only one player left after user(s) disconnected
 
 ## Installation

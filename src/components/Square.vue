@@ -1,11 +1,11 @@
 <template>
   <div class="square" :class="background">
-    <span class="content" v-html="content" :class="{ error: square.error }"></span>
-    <span class="score" v-if="square.letter" :class="{ error: square.error }">{{ score }}</span>
+    <span class="content" v-html="content" :class="{ error: square?.error }"></span>
+    <span class="score" v-if="square?.letter" :class="{ error: square?.error }">{{ score }}</span>
     <transition name="fade">
-      <div class="swap" v-if="square.swap"><i class="material-icons">sync</i></div>
+      <div class="swap" v-if="square?.swap"><i class="material-icons">sync</i></div>
     </transition>
-    <div class="score" v-if="square.score">{{ square.score }}</div>
+    <div class="score" v-if="square?.score">{{ square?.score }}</div>
   </div>
 </template>
 

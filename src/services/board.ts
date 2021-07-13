@@ -10,6 +10,7 @@ export function initialize(): Squares[] {
       moving: false,
       playable: false,
       error: false,
+      swap: false,
       score: 0,
     });
   }

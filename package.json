@@ -4,6 +4,7 @@
   "scripts": {
     "dev": "vite --host",
     "server": "nodemon server/server.js",
+    "start": "node \"server/server\"",
     "build": "vue-tsc --noEmit && vite build",
     "serve": "vite preview"
   },
