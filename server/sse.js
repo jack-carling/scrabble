@@ -36,6 +36,10 @@ module.exports = (app) => {
     res.write(`data: ${message} \n\n`);
   });
 
+  app.get('/sse/ping', (req, res) => {
+    res.json({ success: true });
+  });
+
   app.get('/sse/lobby', (req, res) => {
     const room = req.query.room;
     if (!room) {
