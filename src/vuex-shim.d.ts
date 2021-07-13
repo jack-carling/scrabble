@@ -37,6 +37,8 @@ declare module '@vue/runtime-core' {
     swap: boolean;
     emptyBoard: boolean;
     zeroSquaresSelected: boolean;
+    gameOver: boolean;
+    gameOverInfo: string;
   }
 
   interface ComponentCustomProperties {

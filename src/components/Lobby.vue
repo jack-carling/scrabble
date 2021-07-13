@@ -2,7 +2,7 @@
   <main>
     <img id="logo" src="../assets/logo.png" alt="Logo" draggable="false" />
     <section>
-      <i class="material-icons leave" @click="leaveLobby()">cancel</i>
+      <i class="material-icons leave" @click="leaveLobby">cancel</i>
       <div class="info">
         <strong>LOBBY</strong><br />
         <span>Waiting for everyone to join...</span>

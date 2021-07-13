@@ -1,4 +1,5 @@
 <template>
+  <GameOver v-if="gameOver" />
   <Lobby v-if="lobby" />
   <transition name="flip">
     <Notification :message="message" v-if="error" />
@@ -15,6 +16,7 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import GameOver from '../components/GameOver.vue';
 import Lobby from '../components/Lobby.vue';
 import Notification from '../components/Notification.vue';
 import Board from '../components/Board.vue';
@@ -27,6 +29,7 @@ import { Info, SSE } from '../services/interfaces';
 
 export default defineComponent({
   components: {
+    GameOver,
     Lobby,
     Notification,
     Board,
@@ -54,6 +57,9 @@ export default defineComponent({
     },
     max(): number {
       return this.$store.state.max;
+    },
+    gameOver(): boolean {
+      return this.$store.state.gameOver;
     },
   },
   methods: {

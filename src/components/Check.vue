@@ -2,7 +2,14 @@
   <main>
     <section>
       <div class="button">
-        <button @click="checkWord(true)" ref="button__check" class="animate__animated">Check word</button>
+        <button
+          @click="checkWord(true)"
+          ref="button__check"
+          class="animate__animated"
+          :class="{ 'game-over': gameOver }"
+        >
+          Check word
+        </button>
         <transition name="flip">
           <div v-if="loading">
             <div class="loading"></div>
@@ -10,7 +17,14 @@
         </transition>
       </div>
       <div class="button">
-        <button @click="showConfirmation('skip')" ref="button__skip" class="animate__animated">Skip turn</button>
+        <button
+          @click="showConfirmation('skip')"
+          ref="button__skip"
+          class="animate__animated"
+          :class="{ 'game-over': gameOver }"
+        >
+          Skip turn
+        </button>
         <transition name="fade">
           <span v-if="confirmSkip">
             Are you sure?
@@ -20,7 +34,14 @@
         </transition>
       </div>
       <div class="button">
-        <button @click="showConfirmation('swap')" ref="button__swap" class="animate__animated">Swap letters</button>
+        <button
+          @click="showConfirmation('swap')"
+          ref="button__swap"
+          class="animate__animated"
+          :class="{ 'game-over': gameOver }"
+        >
+          Swap letters
+        </button>
         <transition name="fade">
           <span v-if="confirmSwap">
             Confirm selected?
@@ -97,10 +118,14 @@ export default defineComponent({
     remainingSquares(): number {
       return this.$store.state.remainingSquares;
     },
+    gameOver(): boolean {
+      return this.$store.state.gameOver;
+    },
   },
   emits: ['incorrect-handle'],
   methods: {
     showConfirmation(type: string) {
+      if (this.gameOver) return;
       if (type === 'skip') {
         if (this.currentPlayer !== this.me) {
           this.$emit('incorrect-handle', 'Please wait for your turn!');
@@ -140,6 +165,7 @@ export default defineComponent({
       button.classList.add('animate__jello');
     },
     async checkWord(callFetch: boolean) {
+      if (this.gameOver) return;
       if (this.currentPlayer !== this.me && callFetch) {
         this.$emit('incorrect-handle', 'Please wait for your turn!');
         const button = this.$refs.button__check as HTMLElement;
@@ -401,5 +427,8 @@ div.checkbox {
 }
 button {
   min-width: 110px;
+}
+.game-over {
+  opacity: 0.5;
 }
 </style>

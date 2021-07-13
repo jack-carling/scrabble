@@ -243,7 +243,7 @@ module.exports = (app) => {
 function broadcastRoom(room, message) {
   for (let player of rooms) {
     if (player.room === room) {
-      connections[player.id].write(`data:${message}\n\n`);
+      if (connections[player.id]) connections[player.id].write(`data:${message}\n\n`);
     }
   }
 }

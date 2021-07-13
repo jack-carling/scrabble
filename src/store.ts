@@ -40,6 +40,8 @@ export const store = createStore({
     swap: false,
     emptyBoard: true,
     zeroSquaresSelected: false,
+    gameOver: false,
+    gameOverInfo: '',
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -109,6 +111,10 @@ export const store = createStore({
     setSquaresSelected(state: any, payload: boolean) {
       state.zeroSquaresSelected = payload;
     },
+    triggerGameOver(state: any, payload: string) {
+      state.gameOver = true;
+      state.gameOverInfo = payload;
+    },
   },
   actions: {
     startSSE({ state, commit }) {
@@ -139,11 +145,18 @@ export const store = createStore({
           const index = state.playerData.indexOf(message.id);
           const name = state.players[index];
           state.disconnections.push(name);
-          state.players.splice(1, index);
-          state.playerScore.splice(1, index);
-          state.playerData.splice(1, index);
+          state.players.splice(index, 1);
+          state.playerScore.splice(index, 1);
+          state.playerData.splice(index, 1);
           const me = state.playerData.indexOf(state.id);
           state.me = me;
+          if (state.players.length === 1) {
+            if (state.gameOver) return;
+            commit(
+              'triggerGameOver',
+              'All of the other players seem to have disconnnected. Please start a new game instead.'
+            );
+          }
         }
         if (message.skip) {
           commit('setWords', '*SKIP*');

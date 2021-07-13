@@ -65,6 +65,9 @@ export default defineComponent({
     swap(): boolean {
       return this.$store.state.swap;
     },
+    gameOver(): boolean {
+      return this.$store.state.gameOver;
+    },
   },
   methods: {
     handleResize() {
@@ -73,7 +76,7 @@ export default defineComponent({
       rack.style.height = height * 50 + 'px';
     },
     handleDrag(square: Squares, index: number, e: DragEvent) {
-      if (!square.letter || this.loading || this.swap) {
+      if (!square.letter || this.loading || this.swap || this.gameOver) {
         e.preventDefault();
         return;
       }
