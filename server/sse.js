@@ -214,7 +214,7 @@ module.exports = (app) => {
     }
     const info = rooms.find((x) => x.id === id);
     if (!info) return;
-    const { name, room } = info;
+    const { room } = info;
 
     const remaining = squares[room].length;
     if (!remaining) {
@@ -234,9 +234,24 @@ module.exports = (app) => {
       squares[room].push({ letter: req.body[i] });
     }
 
-    const message = JSON.stringify({ name, id, swap: true });
+    const message = JSON.stringify({ id, swap: true });
     broadcastRoom(room, message);
     res.json({ success: true, data: JSON.stringify(data) });
+  });
+
+  app.post('/sse/end', (req, res) => {
+    const id = req.query.id;
+    if (!id) {
+      const message = 'ID is missing.';
+      handleError(res, message);
+      return;
+    }
+    const info = rooms.find((x) => x.id === id);
+    if (!info) return;
+    const { name, room } = info;
+    const message = JSON.stringify({ name, id, end: true });
+    broadcastRoom(room, message);
+    res.json({ success: true });
   });
 };
 

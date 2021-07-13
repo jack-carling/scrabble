@@ -121,6 +121,9 @@ export default defineComponent({
     gameOver(): boolean {
       return this.$store.state.gameOver;
     },
+    lateGameSkips(): number {
+      return this.$store.state.lateGameSkips.length;
+    },
   },
   emits: ['incorrect-handle'],
   methods: {
@@ -307,6 +310,18 @@ export default defineComponent({
       },
       deep: true,
     },
+    lateGameSkips() {
+      window.setTimeout(() => {
+        if (this.lateGameSkips) {
+          this.info += `<div>`;
+          const time = this.displayTime();
+          this.info += `<span class="time">${time}</span>`;
+          this.info += `<span>${this.lateGameSkips}/${this.players.length} have skipped their turn. If everyone skips the game will end.</span>`;
+          this.info += `</div>`;
+        }
+      }, 10);
+    },
+
     confirmSwap() {
       this.$store.commit('setSwap', this.confirmSwap);
       if (this.confirmSwap) this.$store.commit('setSquaresSelected', false);

@@ -39,6 +39,7 @@ declare module '@vue/runtime-core' {
     zeroSquaresSelected: boolean;
     gameOver: boolean;
     gameOverInfo: string;
+    lateGameSkips: boolean[];
   }
 
   interface ComponentCustomProperties {

@@ -42,6 +42,7 @@ export const store = createStore({
     zeroSquaresSelected: false,
     gameOver: false,
     gameOverInfo: '',
+    lateGameSkips: [],
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -159,12 +160,21 @@ export const store = createStore({
           }
         }
         if (message.skip) {
+          if (state.remainingSquares < 7) {
+            state.lateGameSkips[state.currentPlayer] = true;
+          }
           commit('setWords', '*SKIP*');
           commit('handleRound');
+          if (state.lateGameSkips.length === state.players.length) {
+            commit('triggerGameOver', 'All players have skipped their turn once.');
+          }
         }
         if (message.swap) {
           commit('setWords', '*SWAP*');
           commit('handleRound');
+        }
+        if (message.end) {
+          commit('triggerGameOver', `${message.name} has no tiles remaining.`);
         }
       });
     },

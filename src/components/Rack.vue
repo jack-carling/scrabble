@@ -176,6 +176,11 @@ export default defineComponent({
               count--;
             }
           }
+        } else {
+          if (data.message === 'Error: No squares remaining' && this.rack.every((square) => square.letter === '')) {
+            const response: Response = await fetch(`/sse/end?id=${this.id}`, { method: 'POST' });
+            await response.json();
+          }
         }
       },
       deep: true,
