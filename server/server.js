@@ -2,6 +2,26 @@ const { default: axios } = require('axios');
 const path = require('path');
 const express = require('express');
 const app = express();
+const history = require('connect-history-api-fallback');
+
+app.use(
+  history({
+    rewrites: [
+      {
+        from: /^\/api\.*$/,
+        to: function (context) {
+          return context.parsedUrl.path;
+        },
+      },
+      {
+        from: /^\/sse\/.*$/,
+        to: function (context) {
+          return context.parsedUrl.path;
+        },
+      },
+    ],
+  })
+);
 
 app.use(express.static(path.join(__dirname, '../dist')));
 app.use(express.json());
