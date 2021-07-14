@@ -21,6 +21,10 @@ Interpretation of the classic word game scrabble. Using the HTML Drag and Drop A
 - [x] Handle end of game
 - [x] Handle only one player left after user(s) disconnected
 
+## Screenshot
+
+<img width="1359" alt="Screenshot" src="https://user-images.githubusercontent.com/72305598/125613952-9ec740b0-b65f-4c7d-a4aa-8dacfa76faa1.png">
+
 ## Installation
 
 ```bash
