@@ -21,7 +21,7 @@ import { calculateScore } from '../services/score';
 
 import Square from './Square.vue';
 
-import { Squares, Origin, LetterOrigin, Connections, Letters } from '../services/interfaces';
+import { Squares, Origin, LetterOrigin, Connections, Letters, Disconnections } from '../services/interfaces';
 
 export default defineComponent({
   data() {
@@ -59,6 +59,12 @@ export default defineComponent({
     differentRound(): Letters[] {
       return this.$store.state.differentRound;
     },
+    disconnections(): Disconnections[] {
+      return this.$store.state.disconnections;
+    },
+    gameOver(): boolean {
+      return this.$store.state.gameOver;
+    },
   },
   methods: {
     handleResize() {
@@ -66,7 +72,7 @@ export default defineComponent({
       board.style.height = board.clientWidth + 'px';
     },
     handleDrag(square: Squares, index: number, e: DragEvent) {
-      if (!square.letter || this.loading || !square.playable) {
+      if (!square.letter || this.loading || !square.playable || this.gameOver) {
         e.preventDefault();
         return;
       }
@@ -126,7 +132,7 @@ export default defineComponent({
       this.handlePlayable();
     },
     handleRemove(square: Squares) {
-      if (!square.playable) return;
+      if (!square.playable || this.gameOver) return;
       if (this.currentPlayer !== this.me) {
         this.$emit('incorrect-turn');
         return;
@@ -282,6 +288,8 @@ export default defineComponent({
           do {
             max++;
             if (!this.board[index - max]?.letter) break;
+            const isLeftEdge = (index - max) % 15 === 0;
+            if (isLeftEdge) break;
             horizontalWords.push({
               letter: this.board[index - max].letter,
               index: index - max,
@@ -298,6 +306,8 @@ export default defineComponent({
           do {
             max++;
             if (!this.board[index + max]?.letter) break;
+            const isRightEdge = (index + max) % 15 === 15 - 1;
+            if (isRightEdge) break;
             horizontalWords.push({
               letter: this.board[index + max].letter,
               index: index + max,
@@ -433,10 +443,13 @@ export default defineComponent({
           });
         }
         if (this.board[index + 1]?.letter) {
-          connections.push({
-            index,
-            path: 'east',
-          });
+          const isRightEdge = index % 15 === 15 - 1;
+          if (!isRightEdge) {
+            connections.push({
+              index,
+              path: 'east',
+            });
+          }
         }
         if (this.board[index + 15]?.letter) {
           connections.push({
@@ -445,10 +458,13 @@ export default defineComponent({
           });
         }
         if (this.board[index - 1]?.letter) {
-          connections.push({
-            index,
-            path: 'west',
-          });
+          const isLeftEdge = index % 15 === 0;
+          if (!isLeftEdge) {
+            connections.push({
+              index,
+              path: 'west',
+            });
+          }
         }
       }
 
@@ -611,6 +627,20 @@ export default defineComponent({
         this.board[index].playable = true;
       }
       this.handlePlayable();
+    },
+    disconnections: {
+      handler() {
+        const clear = this.disconnections[this.disconnections.length - 1].clearBoard;
+        if (!clear) return;
+        for (let i = 0; i < this.board.length; i++) {
+          if (this.board[i].playable) {
+            this.board[i].letter = '';
+            this.board[i].playable = false;
+            this.board[i].score = 0;
+          }
+        }
+      },
+      deep: true,
     },
   },
 });

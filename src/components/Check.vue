@@ -67,6 +67,8 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import { Disconnections } from '../services/interfaces';
+
 export default defineComponent({
   data() {
     return {
@@ -103,7 +105,7 @@ export default defineComponent({
     differentCheck(): string[] {
       return this.$store.state.differentCheck;
     },
-    disconnections(): string[] {
+    disconnections(): Disconnections[] {
       return this.$store.state.disconnections;
     },
     words(): string[][] {
@@ -121,8 +123,8 @@ export default defineComponent({
     gameOver(): boolean {
       return this.$store.state.gameOver;
     },
-    lateGameSkips(): number {
-      return this.$store.state.lateGameSkips.length;
+    lateGameSkips(): boolean[] {
+      return this.$store.state.lateGameSkips;
     },
   },
   emits: ['incorrect-handle'],
@@ -279,7 +281,7 @@ export default defineComponent({
     },
     disconnections: {
       handler() {
-        const name = this.disconnections[this.disconnections.length - 1];
+        const name = this.disconnections[this.disconnections.length - 1].name;
         this.info += `<div>`;
         const time = this.displayTime();
         this.info += `<span class="time">${time}</span>`;
@@ -310,16 +312,20 @@ export default defineComponent({
       },
       deep: true,
     },
-    lateGameSkips() {
-      window.setTimeout(() => {
-        if (this.lateGameSkips) {
-          this.info += `<div>`;
-          const time = this.displayTime();
-          this.info += `<span class="time">${time}</span>`;
-          this.info += `<span>${this.lateGameSkips}/${this.players.length} have skipped their turn. If everyone skips the game will end.</span>`;
-          this.info += `</div>`;
-        }
-      }, 10);
+    lateGameSkips: {
+      handler() {
+        window.setTimeout(() => {
+          if (this.lateGameSkips.some((value: boolean) => value === true)) {
+            const total = this.lateGameSkips.filter(Boolean).length;
+            this.info += `<div>`;
+            const time = this.displayTime();
+            this.info += `<span class="time">${time}</span>`;
+            this.info += `<span>${total}/${this.players.length} have skipped their turn. If everyone skips the game will end.</span>`;
+            this.info += `</div>`;
+          }
+        }, 10);
+      },
+      deep: true,
     },
 
     confirmSwap() {

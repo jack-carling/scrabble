@@ -1,15 +1,7 @@
 import { ComponentCustomProperties } from 'vue';
 import { Store } from 'vuex';
 
-interface Origin {
-  source: String;
-  index: number;
-}
-interface Info {
-  code: String;
-  name: String;
-  max: Number;
-}
+import { Origin, Info, Disconnections } from './services/interfaces';
 
 declare module '@vue/runtime-core' {
   interface State {
@@ -33,7 +25,7 @@ declare module '@vue/runtime-core' {
     remainingSquares: number;
     returnToRack: string[];
     playerData: string[];
-    disconnections: string[];
+    disconnections: Disconnections[];
     swap: boolean;
     emptyBoard: boolean;
     zeroSquaresSelected: boolean;

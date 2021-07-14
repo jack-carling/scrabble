@@ -24,6 +24,11 @@ export interface Connections {
   index: number;
 }
 
+export interface Disconnections {
+  name: string;
+  clearBoard: boolean;
+}
+
 export interface Letters {
   index: number;
   letter: string;

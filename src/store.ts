@@ -131,6 +131,7 @@ export const store = createStore({
             state.players[data.player] = data.name;
             state.playerScore[data.player] = 0;
             state.playerData[data.player] = data.id;
+            state.lateGameSkips[data.player] = false;
           }
         }
         if (message.setBoard) {
@@ -145,10 +146,12 @@ export const store = createStore({
         if (message.disconnect) {
           const index = state.playerData.indexOf(message.id);
           const name = state.players[index];
-          state.disconnections.push(name);
+          const clearBoard = state.currentPlayer === index ? true : false;
+          state.disconnections.push({ name, clearBoard });
           state.players.splice(index, 1);
           state.playerScore.splice(index, 1);
           state.playerData.splice(index, 1);
+          state.lateGameSkips.splice(index, 1);
           const me = state.playerData.indexOf(state.id);
           state.me = me;
           if (state.players.length === 1) {
@@ -165,7 +168,7 @@ export const store = createStore({
           }
           commit('setWords', '*SKIP*');
           commit('handleRound');
-          if (state.lateGameSkips.length === state.players.length) {
+          if (state.lateGameSkips.every((value: boolean) => value === true)) {
             commit('triggerGameOver', 'All players have skipped their turn once.');
           }
         }

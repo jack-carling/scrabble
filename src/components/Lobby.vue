@@ -17,6 +17,7 @@
       </label>
       <button @click="copyCode">Copy</button>
     </section>
+    <p>Hint: You can right click on a tile on the board to quickly move it back to your rack!</p>
   </main>
 </template>
 
@@ -144,6 +145,10 @@ input {
 }
 #logo {
   max-width: 500px;
+}
+p {
+  font-size: 0.7rem;
+  margin-top: 2rem;
 }
 @media only screen and (max-width: 532px) {
   #logo {
