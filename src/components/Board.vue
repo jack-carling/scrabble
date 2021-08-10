@@ -185,7 +185,6 @@ export default defineComponent({
         const difference = max - min;
         let connected = true;
         for (let i = min; i < min + difference; i++) {
-          console.log(i);
           if (!this.board[i].letter) {
             connected = false;
             break;
@@ -201,7 +200,6 @@ export default defineComponent({
         const difference = max - min;
         let connected = true;
         for (let i = min; i < min + difference; i += 15) {
-          console.log(i);
           if (!this.board[i].letter) {
             connected = false;
             break;
