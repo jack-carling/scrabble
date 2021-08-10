@@ -178,19 +178,36 @@ export default defineComponent({
         direction = 'error';
       }
 
-      for (let i = 0; i < this.round.length; i++) {
-        if (direction === 'horizontal') {
-          const index = this.round[i].index;
-          if (!this.board[index - 1]?.letter && !this.board[index + 1]?.letter) {
-            direction = 'error';
+      if (direction === 'horizontal') {
+        const indexes = this.round.map((x) => x.index);
+        const min = Math.min(...indexes);
+        const max = Math.max(...indexes);
+        const difference = max - min;
+        let connected = true;
+        for (let i = min; i < min + difference; i++) {
+          console.log(i);
+          if (!this.board[i].letter) {
+            connected = false;
+            break;
           }
         }
-        if (direction === 'vertical') {
-          const index = this.round[i].index;
-          if (!this.board[index - 15]?.letter && !this.board[index + 15]?.letter) {
-            direction = 'error';
+        if (!connected) direction = 'error';
+      }
+
+      if (direction === 'vertical') {
+        const indexes = this.round.map((x) => x.index);
+        const min = Math.min(...indexes);
+        const max = Math.max(...indexes);
+        const difference = max - min;
+        let connected = true;
+        for (let i = min; i < min + difference; i += 15) {
+          console.log(i);
+          if (!this.board[i].letter) {
+            connected = false;
+            break;
           }
         }
+        if (!connected) direction = 'error';
       }
 
       if (direction === 'horizontal') {
