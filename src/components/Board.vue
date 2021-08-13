@@ -304,11 +304,11 @@ export default defineComponent({
             max++;
             if (!this.board[index - max]?.letter) break;
             const isLeftEdge = (index - max) % 15 === 0;
-            if (isLeftEdge) break;
             horizontalWords.push({
               letter: this.board[index - max].letter,
               index: index - max,
             });
+            if (isLeftEdge) break;
           } while (max < 15);
         }
         if (connection.path === 'east') {
@@ -322,11 +322,11 @@ export default defineComponent({
             max++;
             if (!this.board[index + max]?.letter) break;
             const isRightEdge = (index + max) % 15 === 15 - 1;
-            if (isRightEdge) break;
             horizontalWords.push({
               letter: this.board[index + max].letter,
               index: index + max,
             });
+            if (isRightEdge) break;
           } while (max < 15);
         }
       }
