@@ -31,6 +31,7 @@ const PORT = process.env.PORT || 5000;
 app.get('/api', async (req, res) => {
   let response = {};
   const word = req.query.word;
+  const lang = req.query.lang;
 
   if (!word) {
     message = 'Word is missing.';
@@ -38,9 +39,28 @@ app.get('/api', async (req, res) => {
     return;
   }
 
-  const dictionary = await axios.get(`https://scrabblewordfinder.org/dictionary/${word}`);
-  let valid = dictionary.data.search(/<span class="green">Yes<\/span>/);
-  valid = valid === -1 ? false : true;
+  if (!lang) {
+    message = 'Language is missing.';
+    handleError(res, message);
+    return;
+  }
+
+  let dictionary, valid;
+
+  if (lang === 'en') {
+    dictionary = await axios.get(`https://scrabblewordfinder.org/dictionary/${word}`);
+    valid = dictionary.data.search(/<span class="green">Yes<\/span>/);
+    valid = valid === -1 ? false : true;
+  } else if (lang === 'sv') {
+    let term = word;
+    term = term.replace(/Å/g, '%C5');
+    term = term.replace(/Ä/g, '%C4');
+    term = term.replace(/Ö/g, '%D6');
+    dictionary = await axios.get(`https://spraakbanken.gu.se/saolhist/tabell.php?lemma=${term}`);
+    valid = dictionary.data.search(/<td>Totalt f�rekomster:<\/td>/);
+    valid = valid === -1 ? false : true;
+  }
+
   if (valid) {
     response.success = true;
     response.message = `${word}. It's a valid word.`;
@@ -48,6 +68,7 @@ app.get('/api', async (req, res) => {
     response.success = false;
     response.message = `${word}. It's not a valid word.`;
   }
+
   res.json(response);
 });
 
