@@ -38,9 +38,19 @@
       <div class="info">
         <strong>CREATE GAME</strong><br />
         <span>
-          Create a new game and share the code with your friends. Select the number of players and continue to generate
-          your code.
+          Create a new game and share the code with your friends. Choose between English and Swedish language and then
+          select the number of players before continuing to generate your code.
         </span>
+      </div>
+      <div class="lang">
+        <div class="clickable" @click="handleLang('en')">
+          <div class="circle" :class="{ selected: lang === 'en' }"></div>
+          <img src="../assets/en.svg" alt="" />
+        </div>
+        <div class="clickable" @click="handleLang('sv')">
+          <div class="circle" :class="{ selected: lang === 'sv' }"></div>
+          <img src="../assets/sv.svg" alt="" />
+        </div>
       </div>
       <label for="create">
         Number of players
@@ -121,6 +131,7 @@ export default defineComponent({
       ],
       error: false,
       timeout: 0,
+      lang: 'en',
     };
   },
   methods: {
@@ -195,6 +206,9 @@ export default defineComponent({
         this.$router.push('/game');
       }
     },
+    handleLang(lang: string) {
+      this.lang = lang;
+    },
   },
   mounted() {
     if (this.$store.state.lobbyError === 'full') {
@@ -245,6 +259,32 @@ section.start {
     margin-bottom: 1.5rem;
     span {
       font-size: 0.8rem;
+    }
+  }
+  div.lang {
+    grid-column: 1 / 3;
+    margin-bottom: 1.5rem;
+    border: 1px solid $loading-bg;
+    display: flex;
+    div.clickable {
+      display: flex;
+      align-items: center;
+      padding: 0.5rem;
+      cursor: pointer;
+      img {
+        max-width: 20px;
+        margin-right: 2rem;
+      }
+      div.circle {
+        margin-right: 0.5rem;
+        border: 2px solid $loading-bg;
+        border-radius: 50%;
+        min-width: 10px;
+        min-height: 10px;
+      }
+      div.circle.selected {
+        background-color: $empty-bg;
+      }
     }
   }
   div.mobile {
