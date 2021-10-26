@@ -184,6 +184,7 @@ export default defineComponent({
       const players = Number(this.numberOfPlayers);
       this.code = generateRandomCode();
       this.$store.commit('setGameCode', this.code);
+      this.$store.commit('setLanguage', this.lang);
       this.$store.commit('setMax', players);
       this.headerInfo = 'CREATING GAME';
       this.askName = true;

@@ -1,6 +1,4 @@
-import { ComponentCustomProperties } from 'vue';
 import { Store } from 'vuex';
-
 import { Origin, Info, Disconnections } from './services/interfaces';
 
 declare module '@vue/runtime-core' {
@@ -32,6 +30,7 @@ declare module '@vue/runtime-core' {
     gameOver: boolean;
     gameOverInfo: string;
     lateGameSkips: boolean[];
+    language: 'en' | 'sv';
   }
 
   interface ComponentCustomProperties {

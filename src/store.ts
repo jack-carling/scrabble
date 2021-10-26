@@ -1,13 +1,6 @@
 import { createStore } from 'vuex';
 
-interface Origin {
-  source: String;
-  index: number;
-}
-interface Data {
-  id: String;
-  disconnected: Boolean;
-}
+import { Origin } from './services/interfaces';
 
 let SSE: EventSource;
 
@@ -43,6 +36,7 @@ export const store = createStore({
     gameOver: false,
     gameOverInfo: '',
     lateGameSkips: [],
+    language: 'en',
   },
   mutations: {
     setOrigin(state: any, payload: Origin) {
@@ -116,6 +110,9 @@ export const store = createStore({
       state.gameOver = true;
       state.gameOverInfo = payload;
     },
+    setLanguage(state: any, payload: 'en' | 'sv') {
+      state.language = payload;
+    },
   },
   actions: {
     startSSE({ state, commit }) {
@@ -158,7 +155,7 @@ export const store = createStore({
             if (state.gameOver) return;
             commit(
               'triggerGameOver',
-              'All of the other players seem to have disconnnected. Please start a new game instead.'
+              'All of the other players seem to have disconnected. Please start a new game instead.'
             );
           }
         }
