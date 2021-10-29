@@ -61,6 +61,9 @@ export default defineComponent({
     gameOver(): boolean {
       return this.$store.state.gameOver;
     },
+    lang(): string {
+      return this.$store.state.language;
+    },
   },
   methods: {
     displayError(message: string) {
@@ -76,9 +79,12 @@ export default defineComponent({
     const room = this.game.code;
     const name = this.game.name;
     if (!room || !name) this.$router.push('/');
-    const response: Response = await fetch(`/sse/join?id=${this.id}&name=${name}&room=${room}&max=${this.max}`, {
-      method: 'POST',
-    });
+    const response: Response = await fetch(
+      `/sse/join?id=${this.id}&name=${name}&room=${room}&max=${this.max}&lang=${this.lang}`,
+      {
+        method: 'POST',
+      }
+    );
     const data: SSE = await response.json();
 
     if (data.success) {

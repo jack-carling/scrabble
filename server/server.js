@@ -48,7 +48,11 @@ app.get('/api', async (req, res) => {
   let dictionary, valid;
 
   if (lang === 'en') {
-    dictionary = await axios.get(`https://scrabblewordfinder.org/dictionary/${word}`);
+    try {
+      dictionary = await axios.get(`https://scrabblewordfinder.org/dictionary/${word}`);
+    } catch (error) {
+      console.log(error);
+    }
     valid = dictionary.data.search(/<span class="green">Yes<\/span>/);
     valid = valid === -1 ? false : true;
   } else if (lang === 'sv') {
@@ -56,7 +60,11 @@ app.get('/api', async (req, res) => {
     term = term.replace(/Å/g, '%C5');
     term = term.replace(/Ä/g, '%C4');
     term = term.replace(/Ö/g, '%D6');
-    dictionary = await axios.get(`https://spraakbanken.gu.se/saolhist/tabell.php?lemma=${term}`);
+    try {
+      dictionary = await axios.get(`https://spraakbanken.gu.se/saolhist/tabell.php?lemma=${term}`);
+    } catch (error) {
+      console.log(error);
+    }
     valid = dictionary.data.search(/<td>Totalt f�rekomster:<\/td>/);
     valid = valid === -1 ? false : true;
   }

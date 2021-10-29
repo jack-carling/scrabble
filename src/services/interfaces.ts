@@ -44,4 +44,5 @@ export interface SSE {
   message: string;
   data?: string;
   max?: number;
+  lang?: 'en' | 'sv';
 }

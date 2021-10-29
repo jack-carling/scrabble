@@ -55,7 +55,7 @@ module.exports = (app) => {
       handleError(res, message);
       return;
     }
-    res.json({ success: true });
+    res.json({ success: true, lang: exists.lang });
   });
 
   app.post('/sse/join', (req, res) => {
@@ -63,6 +63,7 @@ module.exports = (app) => {
     const name = req.query.name;
     const room = req.query.room;
     let max = Number(req.query.max);
+    const lang = req.query.lang;
 
     if (!id) {
       const message = 'ID is missing.';
@@ -82,14 +83,14 @@ module.exports = (app) => {
 
     const player = rooms.filter((x) => x.room === room).length;
     if (player === 0) {
-      rooms.push({ room, id, name, player, max });
+      rooms.push({ room, id, name, player, max, lang });
     } else {
       rooms.push({ room, id, name, player });
     }
 
     if (!squares.hasOwnProperty(room)) {
       squares[room] = [];
-      squares[room] = [...getSquares];
+      squares[room] = [...getSquares[lang]];
 
       for (let i = squares[room].length - 1; i > 0; i--) {
         const newIndex = Math.floor(Math.random() * (i + 1));

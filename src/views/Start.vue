@@ -170,6 +170,7 @@ export default defineComponent({
           this.animateButton(button);
         });
       } else {
+        this.$store.commit('setLanguage', data.lang);
         this.$store.commit('setGameCode', this.code);
         this.headerInfo = 'JOINING GAME';
         this.askName = true;

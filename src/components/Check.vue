@@ -126,6 +126,9 @@ export default defineComponent({
     lateGameSkips(): boolean[] {
       return this.$store.state.lateGameSkips;
     },
+    lang(): string {
+      return this.$store.state.language;
+    },
   },
   emits: ['incorrect-handle'],
   methods: {
@@ -193,7 +196,7 @@ export default defineComponent({
       let results = [];
 
       for (let word of this.round) {
-        const response: Response = await fetch(`/api?word=${word}&lang=en`);
+        const response: Response = await fetch(`/api?word=${word}&lang=${this.lang}`);
         const data = await response.json();
         results.push(data);
       }
