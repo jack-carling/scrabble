@@ -1,5 +1,6 @@
 <template>
   <section>
+    <img :src="getFlag()" alt="" class="flag" />
     <span class="current" v-html="currentTurn"></span>
     <div class="indicator">
       <div ref="indicator"></div>
@@ -18,10 +19,15 @@
 <script lang="ts">
 import { defineComponent } from 'vue';
 
+import flagEn from '../assets/en.svg';
+import flagSv from '../assets/sv.svg';
+
 export default defineComponent({
   data() {
     return {
       spaces: [] as number[],
+      flagEn: flagEn,
+      flagSv: flagSv,
     };
   },
   computed: {
@@ -43,6 +49,9 @@ export default defineComponent({
       } else {
         return `${name}'s turn`;
       }
+    },
+    lang(): string {
+      return this.$store.state.language;
     },
   },
   mounted() {
@@ -76,6 +85,9 @@ export default defineComponent({
       const indicator = this.$refs.indicator as HTMLElement;
       indicator.style.left = `${this.spaces[this.currentPlayer]}px`;
     },
+    getFlag() {
+      return this.lang === 'en' ? flagEn : flagSv;
+    },
   },
   watch: {
     currentPlayer() {
@@ -95,6 +107,7 @@ export default defineComponent({
 section {
   margin-bottom: 2rem;
   max-width: 350px;
+  position: relative;
 }
 div.turns {
   width: 100%;
@@ -139,5 +152,11 @@ span.current {
   width: 100%;
   display: block;
   text-align: center;
+}
+img.flag {
+  position: absolute;
+  max-width: 20px;
+  top: -1rem;
+  right: 0;
 }
 </style>
