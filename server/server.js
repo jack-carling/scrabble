@@ -56,17 +56,13 @@ app.get('/api', async (req, res) => {
     valid = dictionary.data.search(/<span class="green">Yes<\/span>/);
     valid = valid === -1 ? false : true;
   } else if (lang === 'sv') {
-    let term = word;
-    term = term.replace(/Å/g, '%C5');
-    term = term.replace(/Ä/g, '%C4');
-    term = term.replace(/Ö/g, '%D6');
     try {
-      dictionary = await axios.get(`https://spraakbanken.gu.se/saolhist/tabell.php?lemma=${term}`);
+      dictionary = await axios.get('https://svenska.se/saol/', { params: { sok: word } });
     } catch (error) {
       console.log(error);
     }
-    valid = dictionary.data.search(/<td>Totalt f�rekomster:<\/td>/);
-    valid = valid === -1 ? false : true;
+    valid = dictionary.data.search('SAOL gav inga svar.');
+    valid = valid === -1 ? true : false;
   }
 
   if (valid) {
