@@ -12,7 +12,7 @@
     "axios": "^0.27.2",
     "connect-history-api-fallback": "^1.6.0",
     "express": "^4.18.1",
-    "sass": "^1.50.0",
+    "sass": "^1.52.2",
     "uuid": "^8.3.2",
     "vue": "^3.2.36",
     "vue-router": "^4.0.14",
