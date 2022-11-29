@@ -1,9 +1,5 @@
 # Crosswords
 
-## Demo
-
-[Play on Heroku](https://crosswords-game.herokuapp.com/)
-
 ## Screenshot
 
 <img width="1359" alt="Screenshot" src="https://user-images.githubusercontent.com/72305598/125613952-9ec740b0-b65f-4c7d-a4aa-8dacfa76faa1.png">
